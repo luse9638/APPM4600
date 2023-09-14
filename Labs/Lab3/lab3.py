@@ -2,6 +2,7 @@
 
 # imports
 import numpy as np
+from fixedpt_example import fixedpt
 
 ## Exercise 4
 
@@ -21,6 +22,7 @@ import numpy as np
 
 # 2)
 # create bisection subroutine
+# wrote this instead of downloading the one on canvas because...
 def bisection(a, b, f, tol):
     """
     Find root of function f on interval (a, b)
@@ -111,3 +113,31 @@ print(f4(x0)) # prints 1.4757731615945469
 print(f5(x0)) # prints 1.4757731615945509
 print(f6(x0)) # prints 1.475773161594552
 print(f7(x0)) # prints 1.475773161594552
+
+# fixed points
+x0 = 1
+tolerance = 10 ** (-10)
+Nmax = 100
+
+# fixed point on f4
+#[xstar,ier] = fixedpt(f4, x0, tolerance, Nmax) # returns overflow error since
+# the initial guess is (1, 343), causing subsequent iterations to continue
+# moving further and further away
+
+
+# fixed point on f5
+# [xstar,ier] = fixedpt(f5, x0, tolerance, Nmax) # returns overflow error since
+# the initial guess, (1, 7), causing subsequent iterations to continue moving
+# further and further away
+
+# fixed point on f6
+[xstar,ier] = fixedpt(f6, x0, tolerance, Nmax) # converges!
+print('the approximate fixed point is:',xstar)
+print('f1(xstar):',f6(xstar))
+print('Error message reads:',ier)
+
+# fixed point on f7
+[xstar,ier] = fixedpt(f7, x0, tolerance, Nmax) # converges!
+print('the approximate fixed point is:',xstar)
+print('f1(xstar):',f7(xstar))
+print('Error message reads:',ier)
