@@ -97,3 +97,17 @@ print(bisection(0, 0.1, f3, epsilon))
 
 # returns an error, as no sign change occurs in (0.5, 3pi/4)
 print(bisection(0.5, (3 * np.pi) / 4, f3, epsilon))
+
+# 3a)
+# create our functions and x = 7^(1/5)
+f4 = lambda x: x * (1 + ((7 - x**5) / (x**2)))**3
+f5 = lambda x: x - ((x**(5) - 7) / (x**2))
+f6 = lambda x: x - ((x**(5) - 7) / (5 * x**4))
+f7 = lambda x: x - ((x**(5) - 7) / (12))
+x0 = 7**(1 / 5)
+
+print(x0) # prints 1.4757731615945522
+print(f4(x0)) # prints 1.4757731615945469
+print(f5(x0)) # prints 1.4757731615945509
+print(f6(x0)) # prints 1.475773161594552
+print(f7(x0)) # prints 1.475773161594552
