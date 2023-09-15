@@ -16,7 +16,19 @@ minSVDA = np.linalg.svd(A)[1][1] # sigma_n
 
 # condition number, k(A) = sigma_1 / sigma_n
 condA = maxSVDA / minSVDA
-print(condA)
+print("Problem 2b: condition number of matrix A: " + str(condA))
+
+########################################## c)
+
+delB = np.array([5 * 10 ** -5, 5 * 10 ** -5])
+delX = np.matmul(Ainv, delB)
+normDelX = np.linalg.norm(delX)
+print("Problem 2c: Norm of delX: " + str(normDelX))
+relativeError = condA * normDelX
+print("Problem 2c: relative error of solutoin: " + str(relativeError))
+
+
+
 
 ############################################################################ 4)
 
