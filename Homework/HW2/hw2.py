@@ -37,7 +37,7 @@ def algo(x):
     y = (math.e) ** x
     return y - 1
 
-x1 = 9.999999995000000 * 10 ** -10
+x1 = np.longdouble(9.999999995000000 * 10 ** -10)
 print("Problem 3c: f(9.999999995000000 * 10^-10) = " + str(algo(x1)))
 
 ############################################# d)
@@ -45,13 +45,13 @@ print("Problem 3c: f(9.999999995000000 * 10^-10) = " + str(algo(x1)))
 # function to computer relative error with g_n(x)
 def calcRelError():
     # make initial relative error really really big
-    relError = 10 ** 16
+    relError = np.longdouble(10 ** 10)
     # actual value, f(x1) = 10^-9
-    actual = 10 ** -9
-    # accuracy of 16 digits
-    tolerance = 10 ** -16
+    actual = np.longdouble(10 ** -9)
+    # accuracy of... a lot of  digits
+    tolerance = np.longdouble(10 ** -16)
     # initial approximation is first term of Taylor Series
-    g_n = 0
+    g_n = np.longdouble(0)
     # iterator
     j = 0
     # continue adding terms to Taylor Series, g_n(x), approximating 
@@ -61,10 +61,10 @@ def calcRelError():
         # iterate
         j += 1
         # recalculate g_n(x1) with an additional term 
-        g_n += ((x1 ** j) / (np.math.factorial(j)))
+        g_n += np.longdouble((x1 ** j)) / np.longdouble((math.factorial(j)))
 
         # recalculate relative error
-        relError = (np.absolute(actual - g_n)) / (actual)
+        relError = np.absolute(actual - g_n) / actual
 
     print("Problem 3d: terms needed: " + str(j))
     return relError
@@ -76,8 +76,9 @@ g_2 = lambda x: x + ((x ** 2) / 2)
 ############################################## e)
 
 # output values of g_2(x1) and the relative error calculated from calRelError()
-print("Problem 3d: g_2(x1) = " + "{0:.18f}".format(g_2(x1)))
-print("Problem 3d: relative error is: " + "{0:.18f}".format(relErrorx1))
+# formatted to 18 decimal places of precision
+print("Problem 3e: g_2(x1) = " + "{0:.40f}".format(g_2(np.longdouble(x1))))
+print("Problem 3e: relative error is: " + "{0:.40f}".format(relErrorx1))
 
 ############################################################################ 4)
 
@@ -100,7 +101,7 @@ for tval, yval in zip(t, y):
     S += tval * yval
 
 # output
-print("The sum is: " + str(S))
+print("Problem 4a: The sum is: " + str(S))
 
 ######################################### b)
 
@@ -119,6 +120,7 @@ y = R * (1 + delr * np.sin(f * theta + p)) * np.sin(theta)
 # plot x(theta) vs y(theta)
 plt.figure()
 plt.plot(x, y)
+plt.title("R = 1.2, delr = 0.1, f = 15, p = 0")
 
 # plot 10 curves with variable values of R, f, and p, delr = 0.05
 plt.figure()
@@ -134,5 +136,6 @@ for i in range(1, 11):
     ycurve = R * (1 + delr * np.sin(f * theta + p)) * np.sin(theta)
     plt.plot(xcurve, ycurve)
 
+plt.title("R = i, delr = 0.05, f = 2 + i, p between 0 and 2")
 # show the pretty plots :)
 plt.show()
