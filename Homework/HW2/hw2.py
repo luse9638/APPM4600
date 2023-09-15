@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import random
 
 ############################################################################ 2)
 
@@ -54,19 +55,23 @@ x = R * (1 + delr * np.sin(f * theta + p)) * np.cos(theta)
 # y(theta) = R(1 + delrsin(ftheta + p))sin(theta)
 y = R * (1 + delr * np.sin(f * theta + p)) * np.sin(theta)
 
+# plot x(theta) vs y(theta)
 plt.figure()
 plt.plot(x, y)
 
+# plot 10 curves with variable values of R, f, and p, delr = 0.05
 plt.figure()
 delr = 0.05
 for i in range(1, 11):
     R = i
     f = 2 + i
+    # generate uniformly distributed random number in [0, 2]
+    p = random.uniform(0, 2)
     # x(theta) = R(1 + delrsin(ftheta + p))cos(theta)
     xcurve = R * (1 + delr * np.sin(f * theta + p)) * np.cos(theta)
     # y(theta) = R(1 + delrsin(ftheta + p))sin(theta)
     ycurve = R * (1 + delr * np.sin(f * theta + p)) * np.sin(theta)
     plt.plot(xcurve, ycurve)
 
-
+# show the pretty plots :)
 plt.show()
