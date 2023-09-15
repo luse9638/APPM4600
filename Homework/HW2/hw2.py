@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+import math
 
 ############################################################################ 2)
 
@@ -27,8 +28,56 @@ print("Problem 2c: Norm of delX: " + str(normDelX))
 relativeError = condA * normDelX
 print("Problem 2c: relative error of solutoin: " + str(relativeError))
 
+############################################################################ 3)
 
+############################################# c)
 
+# algorithm to compute f(x) = e^x - 1
+def algo(x):
+    y = (math.e) ** x
+    return y - 1
+
+x1 = 9.999999995000000 * 10 ** -10
+print("Problem 3c: f(9.999999995000000 * 10^-10) = " + str(algo(x1)))
+
+############################################# d)
+
+# function to computer relative error with g_n(x)
+def calcRelError():
+    # make initial relative error really really big
+    relError = 10 ** 16
+    # actual value, f(x1) = 10^-9
+    actual = 10 ** -9
+    # accuracy of 16 digits
+    tolerance = 10 ** -16
+    # initial approximation is first term of Taylor Series
+    g_n = 0
+    # iterator
+    j = 0
+    # continue adding terms to Taylor Series, g_n(x), approximating 
+    # f(x) = e^(x) - 1 until relative error between g_n(x1) and f(x1) is below
+    # tolerance
+    while (relError > tolerance):
+        # iterate
+        j += 1
+        # recalculate g_n(x1) with an additional term 
+        g_n += ((x1 ** j) / (np.math.factorial(j)))
+
+        # recalculate relative error
+        relError = (np.absolute(actual - g_n)) / (actual)
+
+    print("Problem 3d: terms needed: " + str(j))
+    return relError
+
+relErrorx1 = calcRelError() # says only first two terms are needed
+# g_2(x) approximates f(x) using only two terms
+g_2 = lambda x: x + ((x ** 2) / 2)
+
+############################################## e)
+
+# output values of g_2(x1) and the relative error calculated from calRelError()
+print("Problem 3d: g_2(x1) = " + "{0:.18f}".format(g_2(x1)))
+print("Problem 3d: relative error is: " + "{0:.18f}".format(relErrorx1))
 
 ############################################################################ 4)
 
