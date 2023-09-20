@@ -16,16 +16,16 @@ def driver():
 
      # test f1
      x0 = 0.0
-     [xstar,ier] = fixedpt(f1,x0,tol,Nmax)
-     print('the approximate fixed point is:',xstar)
-     print('f1(xstar):',f1(xstar))
-     print('Error message reads:',ier)
+     [xstar, ier, iterations] = fixedpt(f1, x0, tol, Nmax)
+     print('the approximate fixed point is:', xstar[iterations])
+     print('f1(xstar):', f1(xstar[iterations]))
+     print('Error message reads:', ier)
     
      # test f2
      x0 = 0.0
-     [xstar,ier] = fixedpt(f2,x0,tol,Nmax)
-     print('the approximate fixed point is:', xstar)
-     print('f2(xstar):', f2(xstar))
+     [xstar, ier, iterations] = fixedpt(f2, x0, tol, Nmax)
+     print('the approximate fixed point is:', xstar[iterations])
+     print('f2(xstar):', f2(xstar[iterations]))
      print('Error message reads:', ier)
 
 
@@ -33,13 +33,24 @@ def driver():
 # define routines
 def fixedpt(f,x0,tol,Nmax):
     ''' 
-    x0 = initial guess,
-    Nmax = max number of iterations,
-    tol = stopping tolerance,
+    inputs: \n
+    x0 - initial guess, \n
+    Nmax - max number of iterations, \n
+    tol - stopping tolerance \n
+    outputs: \n
+    xStarVec - vector of every approximation calculated, \n
+    ier - 0 for success, 1 for error \n
+    count - number of iterations run \n
     '''
 
-    # iteration counter
+     # iteration counter
     count = 0
+
+    # vector containing all xstars calculated for each iteration
+    xStarVec = np.zeros([Nmax + 1, 1])
+    # initialize first value to be x0
+    xStarVec[count] = x0
+    
     # continue iterating until we reach max iterations
     while (count < Nmax):
        # increment counter
@@ -47,22 +58,27 @@ def fixedpt(f,x0,tol,Nmax):
        
        # sequence is x_(n + 1) = f(x_n)
        x1 = f(x0)
+       # store new iteration in xStarVec
+       xStarVec[count] = x1
+       # TESTING: print each iteration value
+       ########## print(xStarVec[count])
+       
        # terminate if within tolerance
        if (abs(x1 - x0) < tol):
           xstar = x1
           # success!
           ier = 0
-          return [xstar,ier]
+          return (xStarVec, ier, count)
        # update x0 to store x_(n + 1)
        x0 = x1
 
     # if we get here, we've maxed out our iterations without finding a fixed
     # point
 
-    # return whatever our last iteration was
+    # approximation is whatever our last iteration was
     xstar = x1
     # failure :/
     ier = 1
-    return [xstar, ier]
+    return (xStarVec, ier, count)
 
 driver()
