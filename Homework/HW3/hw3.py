@@ -14,14 +14,14 @@ def bisection(a, b, f, tol, *args):
             f: function to find roots of \n
             tol: desire minimum interval size containing a root \n
             realRoot: (optional) will instead run until distance between
-            approximated and real root is less than tol
+            approximated and real root is less than tol \n
             
         
-        Outputs:
-            (c, err, count), where:
-            c: approximation of root, where f(c) ~= 0
-            err: 0 if successful, 1 if no sign change
-            count: number of iterations run
+        Outputs: \n
+            (c, err, count), where: \n
+            c: approximation of root, where f(c) ~= 0 \n
+            err: 0 if successful, 1 if no sign change \n
+            count: number of iterations run \n
     """
 
     # keep track of total iterations
@@ -46,7 +46,6 @@ def bisection(a, b, f, tol, *args):
     # interval be within tolerance
     if args:
         realRoot = args[0]
-        print("Real root entered: " + str(realRoot))
         condition = abs(realRoot - d)
     else:
         condition = abs(b - a)
@@ -87,11 +86,39 @@ def bisection(a, b, f, tol, *args):
 
 
 ############################################################################# 1)
+
 ################################## c)
 
 # define our function
-f = lambda x: np.sin(x) - (2 * x) + 1
+f1 = lambda x: np.sin(x) - (2 * x) + 1
 # tolerance
-tolerance = 1 * 10 ** -5
-(r, error, iterations) = bisection(0, 1, f, tolerance, 0.888)
-print(r)
+tolerance = 1 * 10 ** -4 # TODO: bisection runs forever when 
+                         # tolerance < 1 * 10 ^ -4
+print("")
+print("Problem 1c)")
+# [a, b] = [-pi, pi], tolerance is 1 * 10^-4, real root is 0.888
+(r, error, iterations) = bisection(-1 * np.pi, np.pi, f1, tolerance, 0.888)
+
+############################################################################# 2)
+
+################################## a)
+
+# define our function
+f2 = lambda x: (x - 5) ** 9
+# tolerance
+tolerance = 1 * 10 ** -4
+print("")
+print("Problem 2a)")
+# [a, b] = [4.82, 5.2], tolerance is 1 * 10^-4, real root is 5
+bisection(4.82, 5.2, f2, tolerance)
+
+################################### b)
+
+# define our function
+f2expanded = lambda x: (x ** 9) - (45 * x ** 8) + (900 * x ** 7) - \
+(10500 * x ** 6) + (78750 * x ** 5) - (393750 * x ** 4) + (1312500 * x ** 3) - \
+(2812500 * x ** 2) + (3515625 * x) - 1953125
+print("")
+print("Problem 2b)")
+# [a, b] = [4.82, 5.2], tolerance is 1 * 10^-4, real root is 5
+bisection(4.82, 5.2, f2expanded, tolerance)
