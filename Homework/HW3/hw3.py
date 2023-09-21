@@ -47,30 +47,30 @@ def bisection(a, b, f, tol, *args):
     # interval be within tolerance
     if args:
         realRoot = args[0]
-        condition = abs(realRoot - d)
+        condition = abs(np.longdouble(realRoot - d))
     else:
-        condition = abs(b - a)
+        condition = abs(np.longdouble(b - a))
 
     # continue until interval or is within tolerance
     while (condition > tol):
         # root is actually in right interval
         if ((fd * fa) > 0):
             # move left endpoint to midpoint
-            a = d 
-            fa = fd
+            a = np.longdouble(d) 
+            fa = np.longdouble(fd)
         else: # we were correct, root is in left interval
             # move right endpoint to midpoint
-            b = d
+            b = np.longdouble(d)
         
         # update midpoint
-        d = 0.5 * (a + b)
-        fd = f(d)
+        d = np.longdouble(0.5 * (a + b))
+        fd = np.longdouble(f(d))
 
         # recalculate condition
         if args:
-            condition = abs(realRoot - d)
+            condition = abs(np.longdouble(realRoot - d))
         else:
-            condition = abs(b - a)
+            condition = abs(np.longdouble(b - a))
 
         # update iteration counter
         count += 1
@@ -85,6 +85,57 @@ def bisection(a, b, f, tol, *args):
     err = 0
     return (c, err, count)
 
+def fixedpt(f, x0, tol, Nmax, *args):
+    ''' 
+    inputs: \n
+    x0 - initial guess, \n
+    Nmax - max number of iterations, \n
+    tol - stopping tolerance \n
+    realRoot - (optional)
+
+    outputs: \n
+    xStarVec - vector of every approximation calculated, \n
+    ier - 0 for success, 1 for error \n
+    count - number of iterations run \n
+    '''
+
+    # iteration counter
+    count = 0
+
+    # vector containing all xstars calculated for each iteration
+    xStarVec = np.zeros([Nmax + 1, 1])
+    # initialize first value to be x0
+    xStarVec[count] = x0
+    
+    # continue iterating until we reach max iterations
+    while (count < Nmax):
+       # increment counter
+       count = count + 1
+       
+       # sequence is x_(n + 1) = f(x_n)
+       x1 = -1 * np.sin(2 * x0) + ((5 * x0) / (4)) - (3 / 4)
+       # store new iteration in xStarVec
+       xStarVec[count] = x1
+       # TESTING: print each iteration value
+       ########## print(xStarVec[count])
+       
+       # terminate if within tolerance
+       if (abs(x1 - x0) < tol):
+          xstar = x1
+          # success!
+          ier = 0
+          return (xStarVec, ier, count)
+       # update x0 to store x_(n + 1)
+       x0 = x1
+
+    # if we get here, we've maxed out our iterations without finding a fixed
+    # point
+
+    # approximation is whatever our last iteration was
+    xstar = x1
+    # failure :/
+    ier = 1
+    return (xStarVec, ier, count)
 
 ############################################################################# 1)
 
@@ -93,13 +144,15 @@ def bisection(a, b, f, tol, *args):
 # define our function
 f1 = lambda x: np.sin(x) - (2 * x) + 1
 # tolerance
-tolerance = 1 * 10 ** -4 # TODO: bisection runs forever when 
-                         # tolerance < 1 * 10 ^ -4
+tolerance = np.longdouble(1 * 10 ** -4) # TODO: bisection runs forever when 
+                                        # tolerance < 1 * 10 ^ -4
 print("")
 print("Problem 1c)")
 # [a, b] = [-pi, pi], tolerance is 1 * 10^-4 (approximation distance), real 
 # root is 0.888
-(r, error, iterations) = bisection(-1 * np.pi, np.pi, f1, tolerance, 0.888)
+(r, error, iterations) = bisection(np.longdouble(-1 * np.pi), \
+                                   np.longdouble(np.pi), f1, tolerance, \
+                                   np.longdouble(0.888))
 
 ############################################################################# 2)
 
@@ -151,8 +204,8 @@ x = np.linspace(-20, 20, 500)
 y1 = f4(x)
 y2 = np.zeros([len(x), 1])
 
-# actual roots of f4(x) = 0 
-x0 = np.array([-0.898, -0.544, 1.732, 3.162, 4.518])
+# (approximate) roots of f4(x) = 0, calculated using Wolfram just to plot
+x0 = np.array([-0.898357, -0.544442, 1.73207, 3.16183, 4.51779])
 y0 = np.zeros([len(x0), 1])
 
 # plot everything
@@ -161,5 +214,18 @@ plt.plot(x, y1)
 plt.plot(x, y2)
 plt.scatter(x0, y0)
 plt.title("Problem 5a)")
-
 plt.show()
+
+###################################### b)
+print("")
+print("Problem 5b)")
+
+# first root at x ~= -0.898357
+
+# tolerance and max iterations
+tolerance = 1 * 10 ** -5
+maxIter = 1000
+# guess: x0 = -0.9
+(xStar, err, iterations) = fixedpt(f4, -0.9, tolerance, maxIter)
+print(xStar[iterations])
+
