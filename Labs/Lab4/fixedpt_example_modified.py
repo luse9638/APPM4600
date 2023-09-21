@@ -64,7 +64,7 @@ def fixedpt(f,x0,tol,Nmax):
        ########## print(xStarVec[count])
        
        # terminate if within tolerance
-       if (abs(x1 - x0) < tol):
+       if (abs(x1 - x0) / abs(x0) < tol):
           xstar = x1
           # success!
           ier = 0
@@ -81,4 +81,4 @@ def fixedpt(f,x0,tol,Nmax):
     ier = 1
     return (xStarVec, ier, count)
 
-driver()
+#driver()
