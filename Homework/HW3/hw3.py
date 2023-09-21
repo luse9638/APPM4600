@@ -4,7 +4,7 @@ import numpy as np
 
 #################################################################### Subroutines
 
-# wrote this instead of downloading the one on canvas because...
+# wrote this instead of downloading the one on canvas because... idk
 def bisection(a, b, f, tol, *args):
     """
     Find root of function f on interval (a, b) \n
@@ -96,7 +96,8 @@ tolerance = 1 * 10 ** -4 # TODO: bisection runs forever when
                          # tolerance < 1 * 10 ^ -4
 print("")
 print("Problem 1c)")
-# [a, b] = [-pi, pi], tolerance is 1 * 10^-4, real root is 0.888
+# [a, b] = [-pi, pi], tolerance is 1 * 10^-4 (approximation distance), real 
+# root is 0.888
 (r, error, iterations) = bisection(-1 * np.pi, np.pi, f1, tolerance, 0.888)
 
 ############################################################################# 2)
@@ -109,7 +110,7 @@ f2 = lambda x: (x - 5) ** 9
 tolerance = 1 * 10 ** -4
 print("")
 print("Problem 2a)")
-# [a, b] = [4.82, 5.2], tolerance is 1 * 10^-4, real root is 5
+# [a, b] = [4.82, 5.2], tolerance is 1 * 10^-4 (interval), real root is 5
 bisection(4.82, 5.2, f2, tolerance)
 
 ################################### b)
@@ -120,5 +121,19 @@ f2expanded = lambda x: (x ** 9) - (45 * x ** 8) + (900 * x ** 7) - \
 (2812500 * x ** 2) + (3515625 * x) - 1953125
 print("")
 print("Problem 2b)")
-# [a, b] = [4.82, 5.2], tolerance is 1 * 10^-4, real root is 5
+# [a, b] = [4.82, 5.2], tolerance is 1 * 10^-4 (interval), real root is 5
 bisection(4.82, 5.2, f2expanded, tolerance)
+
+############################################################################# 3)
+
+################################### b)
+
+# define our function
+f3 = lambda x: (x ** 3) + x - 4
+print("")
+print("Problem 3b)")
+# tolerance
+tolerance = 1 * 10 ** -3
+# [a, b] = [1, 4], tolerance is 1 * 10^-3 (approximation distance), real root 
+# is 1.379
+bisection(1, 4, f3, tolerance, 1.379)
