@@ -48,7 +48,7 @@ def bisection(a, b, f, tol, *args):
         realRoot = args[0]
         condition = abs(np.longdouble(realRoot - d))
     else:
-        condition = abs(np.longdouble(b - a))
+        condition = abs(np.longdouble(b - a)) / abs(a)
 
     # continue until interval or is within tolerance
     while (condition > tol):
@@ -84,7 +84,7 @@ def bisection(a, b, f, tol, *args):
     err = 0
     return (c, err, count)
 
-def fixedpt(f, x0, tol, Nmax, realRoot):
+def fixedpt(f, x0, tol, Nmax):
     ''' 
     Does the fixed point iteration of x_(n+1) = -sin(2x_n) + (5x_n / 4) - 3/4 \n
     Inputs: \n
@@ -119,7 +119,8 @@ def fixedpt(f, x0, tol, Nmax, realRoot):
        xStarVec[count] = x1
        
        # terminate if within tolerance
-       if (((abs(x1 - realRoot)) / (abs(realRoot))) < tol):
+       if (((abs(x1 - x0)) / (abs(x0))) < tol):
+          print("")
           # success!
           ier = 0
           return (xStarVec, ier, count)
@@ -131,11 +132,8 @@ def fixedpt(f, x0, tol, Nmax, realRoot):
 
     # if we get here, we've maxed out our iterations without finding a fixed
     # point
-
     print("")
-
-    # approximation is whatever our last iteration was
-    xstar = x1
+    print("ERROR: MAX ITERATIONS EXCEEDED")
     # failure :/
     ier = 1
     return (xStarVec, ier, count)
@@ -147,15 +145,14 @@ def fixedpt(f, x0, tol, Nmax, realRoot):
 # define our function
 f1 = lambda x: np.sin(x) - (2 * x) + 1
 # tolerance
-tolerance = np.longdouble(1 * 10 ** -4) # TODO: bisection runs forever when 
+tolerance = np.longdouble(1 * 10 ** -8) # TODO: bisection runs forever when 
                                         # tolerance < 1 * 10 ^ -4
 print("")
 print("Problem 1c)")
-# [a, b] = [-pi, pi], tolerance is 1 * 10^-4 (approximation distance), real 
-# root is 0.888
+# [a, b] = [-pi, pi], tolerance is 1 * 10^-5 (approximation distance), real 
+# root is approx 0.887862
 (r, error, iterations) = bisection(np.longdouble(-1 * np.pi), \
-                                   np.longdouble(np.pi), f1, tolerance, \
-                                   np.longdouble(0.888))
+                                   np.longdouble(np.pi), f1, tolerance)
 
 ############################################################################# 2)
 
@@ -229,39 +226,39 @@ print("Root: x ~= -0.898357")
 tolerance = 1 * 10 ** -10
 maxIter = 1000
 # guess: x0 = -0.9
-(xStar, err, iterations) = fixedpt(f4, -0.9, tolerance, maxIter, -0.898357)
+(xStar, err, iterations) = fixedpt(f4, -0.9, tolerance, maxIter)
 # can't find this root, approximation shoots off to negative infinity :/
 
 # second root at x ~= -0.544442
-print("Root: x ~= -0.544442")
+print("\nRoot: x ~= -0.544442")
 # max iterations
 maxIter = 1000
 # guess: x0 = -0.5
-(xStar, err, iterations) = fixedpt(f4, -0.5, tolerance, maxIter, -0.544442)
+(xStar, err, iterations) = fixedpt(f4, -0.5, tolerance, maxIter)
 # found this root, but can't improve precision beyond 5 decimal places
 
 # third root at x ~= 1.73207
-print("Root: x ~= 1.73207")
+print("\nRoot: x ~= 1.73207")
 # max iterations
 maxIter = 5000
 # guess: x0 = 1.8
-(xStar, err, iterations) = fixedpt(f4, 1.8, tolerance, maxIter, 1.73207)
+(xStar, err, iterations) = fixedpt(f4, 1.8, tolerance, maxIter)
 # can't find this root, keeps jumping to root at x ~= 3.16183
 
 # fourth root at x ~= 3.16183
-print("Root at x ~= 3.16183")
+print("\nRoot at x ~= 3.16183")
 # max iterations
 maxIter = 1000
 # guess: x0 = 3
-(xStar, err, iterations) = fixedpt(f4, 3, tolerance, maxIter, 3.16183)
+(xStar, err, iterations) = fixedpt(f4, 3, tolerance, maxIter)
 # found this root, but can't improve beyond 5(?) decimal places of precision
 
 # fifth root at x ~= 4.51779
-print("Root at x~= 4.51779")
+print("\nRoot at x~= 4.51779")
 # max iterations
 maxIter = 1000
 # guess: x = 5
-(xStar, err, iterations) = fixedpt(f4, 5, tolerance, maxIter, 4.51779)
+(xStar, err, iterations) = fixedpt(f4, 5, tolerance, maxIter)
 # can't find this root, approximation shoots off to infinity :/
 
 
