@@ -48,7 +48,7 @@ def bisection(a, b, f, tol, *args):
         realRoot = args[0]
         condition = abs(np.longdouble(realRoot - d))
     else:
-        condition = abs(np.longdouble(b - a)) / abs(a)
+        condition = abs(np.longdouble(b - a))
 
     # continue until interval or is within tolerance
     while (condition > tol):
