@@ -1,6 +1,7 @@
 ######################################################################## Imports
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 #################################################################### Subroutines
 
@@ -137,3 +138,28 @@ tolerance = 1 * 10 ** -3
 # [a, b] = [1, 4], tolerance is 1 * 10^-3 (approximation distance), real root 
 # is 1.379
 bisection(1, 4, f3, tolerance, 1.379)
+
+############################################################################# 5)
+
+##################################### a)
+
+# create function
+f4 = lambda x: x - (4 * np.sin(2 * x)) - 3
+
+# x, y1 = f4(x), and y2 = 0 vectors to plot
+x = np.linspace(-20, 20, 500)
+y1 = f4(x)
+y2 = np.zeros([len(x), 1])
+
+# actual roots of f4(x) = 0 
+x0 = np.array([-0.898, -0.544, 1.732, 3.162, 4.518])
+y0 = np.zeros([len(x0), 1])
+
+# plot everything
+plt.figure()
+plt.plot(x, y1)
+plt.plot(x, y2)
+plt.scatter(x0, y0)
+plt.title("Problem 5a)")
+
+plt.show()
