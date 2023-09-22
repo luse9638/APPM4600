@@ -24,4 +24,6 @@ print("Iterations needed: " + str(iterations))
 print("Error code: " + str(err))
 
 (xStarAit, count) = aitkens(xStar, iterations, 10 ** -10) # converges in 7 iterations
-print("Iterations: " + str(count) + ", Value: " + str(xStarAit[count][0]))
+print("")
+print("Aitken's Method Approximation: " + str(xStarAit[count][0]))
+print("Iterations needed: " + str(count))
