@@ -221,7 +221,7 @@ print("")
 print("Problem 5b)")
 
 # first root at x ~= -0.898357
-print("Root: x ~= -0.898357")
+print("For root near x = -0.898357")
 # tolerance and max iterations
 tolerance = 1 * 10 ** -10
 maxIter = 1000
@@ -230,15 +230,15 @@ maxIter = 1000
 # can't find this root, approximation shoots off to negative infinity :/
 
 # second root at x ~= -0.544442
-print("\nRoot: x ~= -0.544442")
+print("\nFor root near x = -0.544442")
 # max iterations
 maxIter = 1000
 # guess: x0 = -0.5
 (xStar, err, iterations) = fixedpt(f4, -0.5, tolerance, maxIter)
-# found this root, but can't improve precision beyond 5 decimal places
+# found this root!
 
 # third root at x ~= 1.73207
-print("\nRoot: x ~= 1.73207")
+print("\nFor root near x = 1.73207")
 # max iterations
 maxIter = 5000
 # guess: x0 = 1.8
@@ -246,12 +246,12 @@ maxIter = 5000
 # can't find this root, keeps jumping to root at x ~= 3.16183
 
 # fourth root at x ~= 3.16183
-print("\nRoot at x ~= 3.16183")
+print("\nFor root near x = 3.16183")
 # max iterations
 maxIter = 1000
 # guess: x0 = 3
 (xStar, err, iterations) = fixedpt(f4, 3, tolerance, maxIter)
-# found this root, but can't improve beyond 5(?) decimal places of precision
+# found this root!
 
 # fifth root at x ~= 4.51779
 print("\nRoot at x~= 4.51779")
