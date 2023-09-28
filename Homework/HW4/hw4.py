@@ -102,11 +102,17 @@ def fixedpt(f, x0, tol, Nmax):
        count = count + 1
        x1 = f(x0)
        if (abs(x1 - x0) / abs(x0) < tol):
+          print("Iterations ran: " + str(count) + ", Current approximation: "\
+               + str(x1), end = '\r')
+          print("")
           xstar = x1
           ier = 0
           return (xstar, ier)
        x0 = x1
+       print("Iterations ran: " + str(count) + ", Current approximation: "\
+               + str(x0), end = '\r')
 
+    print("")
     xstar = x1
     ier = 1
     return (xstar, ier)
@@ -121,15 +127,15 @@ T_i = 20
 T_s = -15
 
 # f(x) = erf(x / 2sqrt(alpha * t_f)) + (T_s) / (T_i - T_s)
-f = lambda x: sp.special.erf((x) / (2 * np.sqrt(alpha * t_f))) +\
+f1 = lambda x: sp.special.erf((x) / (2 * np.sqrt(alpha * t_f))) +\
 ((T_s) / (T_i - T_s))
 # f'(x)
-dfdx = lambda x: ((1) / (np.sqrt(np.pi * alpha * t_f))) *\
+df1dx = lambda x: ((1) / (np.sqrt(np.pi * alpha * t_f))) *\
     np.exp((-1 * x**2) / (4 * alpha * t_f))
 
 # 500 points of (x, f(x))
 x = np.linspace(0, 1, 500)
-y = f(x)
+y = f1(x)
 
 # y0 = 0
 y0 = np.zeros([len(x)])
@@ -148,7 +154,7 @@ print("Problem 1b)")
 tolerance = 10 ** -13
 
 # run bisection on interval [0, 1]
-(root, error, iterations) = bisection(0, 1, f, tolerance)
+(root, error, iterations) = bisection(0, 1, f1, tolerance)
 print("Error code: " + str(error))
 
 ################################### c)
@@ -156,16 +162,28 @@ print("")
 print("Problem 1c)")
 
 # Newton's method iteration
-n = lambda x: x - (f(x) / dfdx(x))
+n1 = lambda x: x - (f1(x) / df1dx(x))
 
 # run Newton's method with x0 = 0.01
-(newtRoot1, error) = fixedpt(n, 0.01, 1000, tolerance)
+(newtRoot1, error) = fixedpt(n1, 0.01, 1000, tolerance)
 print("Approximate depth with x0 = 0.01: " + str(newtRoot1))
 print("Error code: " + str(error))
 
 # run Newton's method with x0 = 1
-(newtRoot2, error) = fixedpt(n, 1, 1000, tolerance)
+(newtRoot2, error) = fixedpt(n1, 1, 1000, tolerance)
 print("Approximate depth with x0 = 1: " + str(newtRoot2))
 print("Error code: " + str(error))
+
+############################################################################# 3)
+
+################################### c)
+print("")
+print("Problem 3a)")
+
+f2 = lambda x: np.power(np.exp(x) - (3 * np.power(x, 2)), 3)
+df2dx = lambda x: 3 * (np.exp(x) - 3 * np.power(x, 2)) * (np.exp(x) - 6 * x)
+n2 = lambda x: x - (f2(x) / df2dx(x))
+(newtRoot3, error) = fixedpt(n2, 3.73, tolerance, 55)
+
 
 
