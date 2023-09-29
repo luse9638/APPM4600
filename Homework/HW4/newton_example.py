@@ -38,9 +38,9 @@ def newton(f,fp,p0,tol,Nmax):
   """
   p = np.zeros(Nmax+1)
   p[0] = p0
-  for it in range(Nmax):
+  for it in range(1, Nmax + 1):
       p1 = p0-f(p0)/fp(p0)
-      p[it+1] = p1
+      p[it] = p1
       if (abs(p1-p0) < tol):
           pstar = p1
           info = 0

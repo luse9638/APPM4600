@@ -231,6 +231,8 @@ d2f2dx2 = lambda x: 3 * (np.exp(x) - 3 * np.power(x, 2)) *\
     (90 * np.power(x, 2) - 3 * np.exp(x) * (np.power(x, 2) + 8 * x + 2) + \
                         3 * np.exp(2 * x))
 
+tolerance2 = 10 ** -16
+
 ################################### ii)
 print("")
 print("Problem 4ii)")
@@ -240,7 +242,7 @@ mu = lambda x: f2(x) / df2dx(x)
 dmudx = lambda x: 1 - ((f2(x) * d2f2dx2(x)) / (np.power(df2dx(x), 2)))
 
 # run the modified function on newton's method
-(p2, pstar, info, it) = newton(mu, dmudx, 4, tolerance, 7)
+(p2, pstar, info, it) = newton(mu, dmudx, 4, tolerance2, 7)
 for (iter, val) in zip(range(it), p2):
     print("Iteration: " + str(iter) + ", Approximation: " + str(val))
 
@@ -251,7 +253,7 @@ print("Problem 4iii)")
 # now run the function on modified newton's method
 (p3, pstar, info, it) = modNewton(f2, df2dx, 4, 3, tolerance, 6)
 for (iter, val) in zip(range(len(p3)), p3):
-    print("Iteration: " + str(iter) + ", Approximation: " + str(pstar))
+    print("Iteration: " + str(iter) + ", Approximation: " + str(val))
 
 ############################################################################# 5)
 
