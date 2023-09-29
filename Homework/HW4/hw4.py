@@ -3,6 +3,7 @@
 import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
+from newton_example import newton, modNewton
 
 #################################################################### subroutines
 
@@ -101,7 +102,7 @@ def fixedpt(f, x0, tol, Nmax):
     while (count < Nmax):
        count = count + 1
        x1 = f(x0)
-       if (abs(x1 - x0) / abs(x0) < tol):
+       if (abs(x1 - x0) < tol):
           print("Iterations ran: " + str(count) + ", Current approximation: "\
                + str(x1), end = '\r')
           print("")
@@ -117,7 +118,58 @@ def fixedpt(f, x0, tol, Nmax):
     ier = 1
     return (xstar, ier)
 
+def secant(p0, p1, f, tol, Nmax):
+    """
+    Find root of function f using the secand method \n
+        Inputs: \n
+            p0, p1: initial guess \n
+            f: function \n
+            tol: tolerance \n
+            Nmax: max number of iterations \n
+        Outputs: \n
+            (pStar, err, it) where:
+                pStar: approximate root \n
+                err: 0 if success, 1 if failure \n
+                it: number of iterations
+    """
+
+    # store approximations here
+    pStar = np.zeros([Nmax])
+    # lucky guesses !
+    if (f(p0) == 0): 
+        pStar[0] = p0
+        err = 0
+        return (pStar, err)
+    if (f(p1) == 0):
+        pStar[0] = p1
+        err = 0
+        return (pStar, err)
+    
+    # time to keep iterating
+    for it in range(1, Nmax):
+        # no horizontal tangents allowed
+        if (abs(f(p1) - f(p0)) == 0): 
+            err = 1
+            pStar[it] = p1
+            return (pStar, err)
+        # iterate
+        p2 = p0 - ((f(p1) * (p1 - p0)) / (f(p1) - f(p0)))
+        # check if we should terminate
+        if (abs(f(p2) - f(p1)) < tol):
+            pStar[it] = p2
+            err = 0
+            return (pStar, err)
+        # reset values
+        p0 = p1
+        p1 = p2
+
+    # if we get here, exceeded max iterations
+    pStar[it] = p2
+    err = 1
+    return (pStar, err, it)
+
 ############################################################################# 1)
+
 ################################### a)
 
 # constants
@@ -165,25 +217,63 @@ print("Problem 1c)")
 n1 = lambda x: x - (f1(x) / df1dx(x))
 
 # run Newton's method with x0 = 0.01
-(newtRoot1, error) = fixedpt(n1, 0.01, 1000, tolerance)
-print("Approximate depth with x0 = 0.01: " + str(newtRoot1))
-print("Error code: " + str(error))
+(p1, pstar, info, it) = newton(f1, df1dx, 0.01, tolerance, 1000)
+print("Approximate depth with x0 = 0.01: " + str(p1[it]))
+print("Error code: " + str(info))
 
-# run Newton's method with x0 = 1
-(newtRoot2, error) = fixedpt(n1, 1, 1000, tolerance)
-print("Approximate depth with x0 = 1: " + str(newtRoot2))
-print("Error code: " + str(error))
+############################################################################# 4)
 
-############################################################################# 3)
-
-################################### c)
-print("")
-print("Problem 3a)")
-
+# define function and derivatives
 f2 = lambda x: np.power(np.exp(x) - (3 * np.power(x, 2)), 3)
-df2dx = lambda x: 3 * (np.exp(x) - 3 * np.power(x, 2)) * (np.exp(x) - 6 * x)
-n2 = lambda x: x - (f2(x) / df2dx(x))
-(newtRoot3, error) = fixedpt(n2, 3.73, tolerance, 55)
+df2dx = lambda x: 3 * np.power((np.exp(x) - 3 * np.power(x, 2)), 2) *\
+    (np.exp(x) - 6 * x)
+d2f2dx2 = lambda x: 3 * (np.exp(x) - 3 * np.power(x, 2)) *\
+    (90 * np.power(x, 2) - 3 * np.exp(x) * (np.power(x, 2) + 8 * x + 2) + \
+                        3 * np.exp(2 * x))
+
+################################### ii)
+print("")
+print("Problem 4ii)")
+
+# modified function for newton's method
+mu = lambda x: f2(x) / df2dx(x)
+dmudx = lambda x: 1 - ((f2(x) * d2f2dx2(x)) / (np.power(df2dx(x), 2)))
+
+# run the modified function on newton's method
+(p2, pstar, info, it) = newton(mu, dmudx, 4, tolerance, 7)
+for (iter, val) in zip(range(it), p2):
+    print("Iteration: " + str(iter) + ", Approximation: " + str(val))
+
+################################## iii)
+print("")
+print("Problem 4iii)")
+
+# now run the function on modified newton's method
+(p3, pstar, info, it) = modNewton(f2, df2dx, 4, 3, tolerance, 6)
+for (iter, val) in zip(range(len(p3)), p3):
+    print("Iteration: " + str(iter) + ", Approximation: " + str(pstar))
+
+############################################################################# 5)
+
+# define our function
+f3 = lambda x: np.power(x, 6) - x - 1
+df3dx = lambda x: 6 * np.power(x, 5) - 1
+
+#################################### a)
+print("")
+print("Problem 5a)")
+
+# first run Newton's on the function
+(pNewt, pstar, info, it1) = newton(f2, df2dx, 4, tolerance, 6)
+
+# then run secant on the function
+(pSec, err, it2) = secant(2, 1, f3, tolerance, 20)
+
+for i in range(max(it1, it2)):
+    print("Iteration: " + str(i) + ", Newton: " + str(pNewt[i]) + \
+          ", Secant: " + str(pSec[i]))
+
+
 
 
 
