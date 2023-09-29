@@ -139,26 +139,30 @@ def secant(p0, p1, f, tol, Nmax):
     if (f(p0) == 0): 
         pStar[0] = p0
         err = 0
-        return (pStar, err)
+        return (pStar, err, 0)
     if (f(p1) == 0):
         pStar[0] = p1
         err = 0
-        return (pStar, err)
+        return (pStar, err, 0)
+    
+    pStar[0] = p0
+    pStar[1] = p1
     
     # time to keep iterating
-    for it in range(1, Nmax):
+    for it in range(2, Nmax):
         # no horizontal tangents allowed
         if (abs(f(p1) - f(p0)) == 0): 
             err = 1
             pStar[it] = p1
-            return (pStar, err)
+            return (pStar, err, it)
         # iterate
-        p2 = p0 - ((f(p1) * (p1 - p0)) / (f(p1) - f(p0)))
+        p2 = p1 - ((f(p1) * (p1 - p0)) / (f(p1) - f(p0)))
+        pStar[it] = p2
         # check if we should terminate
         if (abs(f(p2) - f(p1)) < tol):
             pStar[it] = p2
             err = 0
-            return (pStar, err)
+            return (pStar, err, it)
         # reset values
         p0 = p1
         p1 = p2
@@ -266,14 +270,33 @@ print("")
 print("Problem 5a)")
 
 # first run Newton's on the function
-(pNewt, pstar, info, it1) = newton(f2, df2dx, 4, tolerance, 6)
+(pNewt, pstar, info, it1) = newton(f3, df3dx, 2, tolerance, 50)
 
 # then run secant on the function
-(pSec, err, it2) = secant(2, 1, f3, tolerance, 20)
+(pSec, err, it2) = secant(1, 2, f3, tolerance, 50)
 
+realRoot = 1.3472
 for i in range(max(it1, it2)):
-    print("Iteration: " + str(i) + ", Newton: " + str(pNewt[i]) + \
-          ", Secant: " + str(pSec[i]))
+    print("Iteration: " + str(i) + ":")
+    if pNewt[i]:
+        print("Newton Error: " + str(abs(pNewt[i] - realRoot)) + ", ", end = "")
+    if pSec[i]:
+        print("Secant Error: " + str(abs(pSec[i] - realRoot)))
+
+#################################### b)
+logNewtErrY = []
+logNewtErrX = []
+for i in range(0, len(pNewt) - 1):
+    logNewtErrY.append(abs(pNewt[i + 1] - realRoot))
+    logNewtErrX.append(abs(pNewt[i] - realRoot))
+logSecErrY = []
+logSecErrX = []
+for i in range(0, len(pSec) - 1):
+    logSecErrY.append(abs(pSec[i + 1] - realRoot))
+    logSecErrX.append(abs(pSec[i] - realRoot))
+
+print(logNewtErrX)
+print(logSecErrX)
 
 
 
