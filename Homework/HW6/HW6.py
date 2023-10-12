@@ -8,23 +8,23 @@ import time
 
 def jacobian(F, x: jnp.array):
     '''
-    Compute jacobian of F at x
+    Compute jacobian of vector-valued function F at x
     Inputs:
-        F: F = (f_1(x), ..., f_n(x))
+        F: F(x) = (f_1(x), ..., f_n(x))
         x: x = (x_1, ..., x_n)
     Outputs:
-        J: n x n Jacobian matrix of f evaluated at x
+        J: n x n Jacobian matrix of F evaluated at x
     '''
     return jnp.array(jax.jacfwd(F)(x))
 
 def gradient(F, x: jnp.array):
     '''
-    Computes gradient of scalar-valued F at x
+    Computes gradient of scalar-valued function F at x
     Inputs:
-        F: F = (f_1(x), ..., f_n(x))
+        F: F(x) = (f_1(x), ..., f_n(x))
         x: x = (x_1, ..., x_n)
     Outputs:
-
+        delF: vector containing gradient of F evaluated at x
     '''
     return jnp.array(jax.grad(F)(x))
 
@@ -34,18 +34,21 @@ def nDNewton(x0: jnp.array, F, tol, nMax):
     Run Newton's Method on a vector valued function F
     Inputs:
         x0: initial guess, x0 = (x_1, ..., x_n)
-        F: F = (f_1(x), ..., f_n(x))
+        F: F(x) = (f_1(x), ..., f_n(x))
         tol: tolerance
         nMax: max iterations
     Outputs:
         [xStar, err, its] where:
-            xStar: approximate root
-            err: error message
+            xStar: approximate root, vector
+            err: error code
+                0: success
+                1: max iterations exceeded
+                2: next approximation will NaN or inf
             its: number of iterations run
     '''
 
     # run until we reach nMax or tolerance
-    for its in range(nMax):
+    for its in range(1, nMax + 1):
         # compute jacobian and it's inverse
         J = jacobian(F, x0)
         Jinv = jnp.linalg.inv(J)
@@ -58,6 +61,12 @@ def nDNewton(x0: jnp.array, F, tol, nMax):
             xStar = x1
             err = 0
             return [xStar, err, its]
+        
+        # terminante if we get a NaN or inf
+        if (True in jnp.isinf(x1) or True in jnp.isnan(x1)):
+            xStar = x0
+            err = 2
+            return [xStar, err, its]
 
         x0 = x1
     
@@ -68,16 +77,19 @@ def nDNewton(x0: jnp.array, F, tol, nMax):
 
 def nDLazyNewton(x0: jnp.array, F, tol, nMax):
     '''
-    Run Newton's Method on a vector valued function F
+    Run Lazy Newton's Method on a vector valued function F
     Inputs:
         x0: initial guess, x0 = (x_1, ..., x_n)
-        F: F = (f_1(x), ..., f_n(x))
+        F: F(x) = (f_1(x), ..., f_n(x))
         tol: tolerance
         nMax: max iterations
     Outputs:
         [xStar, err, its] where:
-            xStar: approximate root
-            err: error message
+            xStar: approximate root, vector
+            err: error code
+                0: success
+                1: max iterations exceeded
+                2: next approximation will NaN or inf
             its: number of iterations run
     '''
 
@@ -86,7 +98,7 @@ def nDLazyNewton(x0: jnp.array, F, tol, nMax):
     Jinv = jnp.linalg.inv(J)
     
     # run until we reach nMax or tolerance
-    for its in range(nMax):
+    for its in range(1, nMax + 1):
         # iterate
         x1 = x0 - jnp.dot(Jinv, F(x0))
 
@@ -94,6 +106,12 @@ def nDLazyNewton(x0: jnp.array, F, tol, nMax):
         if (jnp.linalg.norm(x1 - x0) < tol):
             xStar = x1
             err = 0
+            return [xStar, err, its]
+        
+        # terminante if we get a NaN or inf
+        if (True in jnp.isinf(x1) or True in jnp.isnan(x1)):
+            xStar = x0
+            err = 2
             return [xStar, err, its]
 
         x0 = x1
@@ -108,13 +126,16 @@ def nDBroyden(x0: jnp.array, F, tol, nMax):
     Run Broyden's method on a vector-valued function F
     Inputs:
         x0: initial guess, x0 = (x_1, ..., x_n)
-        F: F = (f_1(x), ..., f_n(x))
+        F: F(x) = (f_1(x), ..., f_n(x))
         tol: tolerance
         nMax: max iterations
     Outputs:
         [xStar, err, its] where:
-            xStar: approximate root
-            err: error message
+            xStar: approximate root, vector
+            err: error code
+                0: success
+                1: max iterations exceeded
+                2: next approximation will NaN or inf
             its: number of iterations run
     '''
 
@@ -124,7 +145,7 @@ def nDBroyden(x0: jnp.array, F, tol, nMax):
     s = -1 * jnp.dot(A, v)
     xk = x0 + s
 
-    for its in range(nMax):
+    for its in range(1, nMax + 1):
         w = v
         v = F(xk)
         y = v - w
@@ -135,10 +156,17 @@ def nDBroyden(x0: jnp.array, F, tol, nMax):
         tmp2 = jnp.outer(tmp, u)
         A = (A + (1. / p)) * tmp2
         s = -1 * jnp.dot(A, v)
+        tmp3 = xk
         xk = xk + s
         if (jnp.linalg.norm(s) < tol):
             xStar = xk
             err = 0
+            return [xStar, err, its]
+        
+        # terminate if we get a NaN or inf
+        if (True in jnp.isinf(xk) or True in jnp.isnan(xk)):
+            xStar = tmp3
+            err = 2
             return [xStar, err, its]
         
     xStar = xk
@@ -150,26 +178,31 @@ def steepestDescent(x0: jnp.array, g, tol, nMax):
     Approximate a solution that minimizes g(x)
     Inputs:
         x0: initial guess, x0 = [x_1, ..., x_n]
-        g: scalar function to minimize
+        g(x): scalar function to minimize
         tol: tolerance
         nMax: max iterations
     Outputs:
         [x, err, its, g1] where:
-            x: approximate minimum
+            x: approximate minimum, vector
             err: error code
+                0: success
+                1: max iterations exceeded
+                2: next iteration will NaN or inf
+                3: zero gradient
+                4: no likely improvement
             its: number of iterations run
-            g1: approximated minimum value of g
+            g1: approximate minimum value of g evaluated at x
     '''
 
     x = x0
     
-    for its in range(nMax):
+    for its in range(1, nMax + 1):
         g1 = g(x)
         z = gradient(g, x)
         z0 = jnp.linalg.norm(z)
 
         if (z0 == 0):
-            err = 1
+            err = 3
             return [x, err, its, g1]
         z = z / z0
         alpha1 = 0
@@ -181,7 +214,7 @@ def steepestDescent(x0: jnp.array, g, tol, nMax):
             g3 = g(x - alpha3 * z)
 
             if (alpha3 < tol / 2):
-                err = 2
+                err = 4
                 return [x, err, its, g1]
         
         alpha2 = alpha3 / 2
@@ -201,13 +234,19 @@ def steepestDescent(x0: jnp.array, g, tol, nMax):
             alpha = alpha3
             gval = g3
         
+        tmp = x
         x = x - alpha * z
 
         if (abs(gval - g1) < tol):
             err = 0
             return [x, err, its, g1]
         
-    err = 3
+        if (True in jnp.isinf(x) or True in jnp.isnan(x)):
+            err = 2
+            return [tmp, err, its, g1]
+            
+        
+    err = 1
     return [x, err, its, g1]
 
 
@@ -241,14 +280,14 @@ def driver():
     # time how long it takes to call nDLazyNewton
     start = time.time()
     # x0 = [1, 1]
-    iLazyNewton = nDLazyNewton(jnp.array([1., 1.]), F_1, tolerance, 8)
+    iLazyNewton = nDLazyNewton(jnp.array([1., 1.]), F_1, tolerance, 100)
     end = time.time()
     iLazyNewtonDuration = end - start
 
     # time how long it takes to call nDBroyden
     start = time.time()
     # x0 = [1, 1]
-    iBroyden = nDBroyden(jnp.array([1., 1.]), F_1, tolerance, 3)
+    iBroyden = nDBroyden(jnp.array([1., 1.]), F_1, tolerance, 100)
     end = time.time()
     iBroydenDuration = end - start
 
@@ -287,7 +326,7 @@ def driver():
     # time how long it takes to call nDBroyden
     start = time.time()
     # x0 = [1, -1]
-    iiBroyden = nDBroyden(jnp.array([1., -1.]), F_1, tolerance, 30)
+    iiBroyden = nDBroyden(jnp.array([1., -1.]), F_1, tolerance, 100)
     end = time.time()
     iiBroydenDuration = end - start
 
@@ -312,21 +351,21 @@ def driver():
     # time how long it takes to call nDNewton
     start = time.time()
     # x0 = [0, 0]
-    iiiNewton = nDNewton(jnp.array([0., 0.]), F_1, tolerance, 2)
+    iiiNewton = nDNewton(jnp.array([0., 0.]), F_1, tolerance, 100)
     end = time.time()
     iiiNewtonDuration = end - start
 
     # time how long it takes to call nDLazyNewton
     start = time.time()
     # x0 = [0, 0]
-    iiiLazyNewton = nDLazyNewton(jnp.array([0., 0.]), F_1, tolerance, 2)
+    iiiLazyNewton = nDLazyNewton(jnp.array([0., 0.]), F_1, tolerance, 100)
     end = time.time()
     iiiLazyNewtonDuration = end - start
 
     # time how long it takes to call nDBroyden
     start = time.time()
     # x0 = [0, 0]
-    iiiBroyden = nDBroyden(jnp.array([0., 0.]), F_1, tolerance, 2)
+    iiiBroyden = nDBroyden(jnp.array([0., 0.]), F_1, tolerance, 100)
     end = time.time()
     iiiBroydenDuration = end - start
 
@@ -385,6 +424,15 @@ def driver():
     end = time.time()
     twoSteepestDuration = end - start
 
+    # time how long it takes to do steepestDescent and nDNewton method
+    start = time.time()
+    # x0 = [1/2, 1/2, 1/2]
+    x1 = steepestDescent(jnp.array([0.5, 0.5, 0.5]), G_1, 5e-2,\
+                                    100)[0]
+    threeSteepestNewton = nDNewton(x1, F_2, 1e-6, 100)
+    end = time.time()
+    threeSteepestNewtonDuration = end - start
+
     # print results
     print("Iterations needed for Newton's Method: " + str(twoNewton[2]) +\
         ", duration ran: " + str(twoNewtonDuration) + ", approximated root: " +\
@@ -393,8 +441,13 @@ def driver():
         ", duration ran: " + str(twoSteepestDuration) +\
             ", approximated root: " + str(twoSteepest[0]) + ", error code: " +\
                 str(twoSteepest[1]))
+    print("Iterations needed for Steepest Descent followed by Newton's Method:"\
+           + " " + str(threeSteepestNewton[2]) + ", duration ran: " +\
+            str(threeSteepestNewtonDuration) + ", approximated root: " +\
+                str(threeSteepestNewton[0]) + ", error code: " +\
+                    str(threeSteepestNewton[1]))
 
-
+# don't run driver unless HW6.py called from command line
 if __name__ == "__main__":
     driver()
 
