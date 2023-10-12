@@ -415,28 +415,27 @@ def driver():
         return G
     
     tolerance = 1e-6
+    # x0 = [0, 1, 1]
+    x0 = jnp.array([0.0, 1.0, 1.0])
     
     # time how long it takes to call nDNewton
     start = time.time()
-    # x0 = [1/2, 1/2, 1/2]
-    twoNewton = nDNewton(jnp.array([0.5, 0.5, 0.5]), F_2, tolerance, 10)
+    twoNewton = nDNewton(x0, F_2, tolerance, 10)
     end = time.time()
     twoNewtonDuration = end - start
 
     # time how long it takes to call steepestDescent
     start = time.time()
-    # x0 = [1/2, 1/2, 1/2]
-    twoSteepest = steepestDescent(jnp.array([0.5, 0.5, 0.5]), G_1, tolerance,\
+    twoSteepest = steepestDescent(x0, G_1, tolerance,\
                                   50)
     end = time.time()
     twoSteepestDuration = end - start
 
     # time how long it takes to do steepestDescent and nDNewton method
     start = time.time()
-    # x0 = [1/2, 1/2, 1/2]
-    threeSteepest = steepestDescent(jnp.array([0.5, 0.5, 0.5]), G_1, 5e-2,\
+    threeSteepest = steepestDescent(x0, G_1, 5e-2,\
                                     100)
-    threeNewton = nDNewton(threeSteepest[0], F_2, 1e-6, 100)
+    threeNewton = nDNewton(threeSteepest[0], F_2, tolerance, 100)
     end = time.time()
     threeSteepestNewtonDuration = end - start
 
