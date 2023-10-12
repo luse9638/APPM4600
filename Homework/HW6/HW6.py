@@ -346,6 +346,53 @@ def driver():
                 str(iiiBroyden[1]))
     
 ############################################################################# 2)
+    print("")
+    print("Problem 2)")
+
+    # F_2(x, y, z) = [f_1(x, y, z), f_2(x, y, z), f_3(x, y, z)]
+    # f_1(x, y, z) = x + cos(xyz) - 1
+    # f_2(x, y, z) = (1 - x)^(1/4) + y + 0.05z^2 - 0.15z - 1
+    # f_3(x, y, z) = -x^2 - 0.1y^2 + 0.01y + z - 1
+    def F_2(x: jnp.array):
+        F = []
+        F.append(x[0] + jnp.cos(x[0] * x[1] * x[2]) - 1)
+        F.append(((1 - x[0]) ** (1/4)) + x[1] + (0.05 * x[2] ** 2) -\
+                 0.15 * x[2] - 1)
+        F.append((-1 * x[0] ** 2) - (0.1 * x[1] ** 2) + 0.01 * x[1] + x[2] - 1)
+        return jnp.array([F[0], F[1], F[2]])
+    
+    # G_1(x, y, z) = sum_(i=1)^(3) [f_i(x, y, z)]^2
+    def G_1(x: jnp.array):
+        G = 0
+        for i in range(0, 3):
+            G += (F_2(x)[i]) ** 2
+        return G
+    
+    tolerance = 1e-6
+    
+    # time how long it takes to call nDNewton
+    start = time.time()
+    # x0 = [1/2, 1/2, 1/2]
+    twoNewton = nDNewton(jnp.array([0.5, 0.5, 0.5]), F_2, tolerance, 10)
+    end = time.time()
+    twoNewtonDuration = end - start
+
+    # time how long it takes to call steepestDescent
+    start = time.time()
+    # x0 = [1/2, 1/2, 1/2]
+    twoSteepest = steepestDescent(jnp.array([0.5, 0.5, 0.5]), G_1, tolerance,\
+                                  50)
+    end = time.time()
+    twoSteepestDuration = end - start
+
+    # print results
+    print("Iterations needed for Newton's Method: " + str(twoNewton[2]) +\
+        ", duration ran: " + str(twoNewtonDuration) + ", approximated root: " +\
+            str(twoNewton[0]) + ", error code: " + str(twoNewton[1]))
+    print("Iterations needed for Steepest Descent: " + str(twoSteepest[2]) +\
+        ", duration ran: " + str(twoSteepestDuration) +\
+            ", approximated root: " + str(twoSteepest[0]) + ", error code: " +\
+                str(twoSteepest[1]))
 
 
 if __name__ == "__main__":
