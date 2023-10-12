@@ -138,7 +138,7 @@ def nDBroyden(x0: jnp.array, F, tol, nMax):
 
 
 def driver():
-    ############################################################################# 1)
+############################################################################# 1)
     print("")
     print("Problem 1)")
 
@@ -153,7 +153,7 @@ def driver():
     
     tolerance = 1e-10
 
-    ###################################### i)
+########################################## i)
     print("")
     print("i)")
 
@@ -192,7 +192,7 @@ def driver():
             str(iBroyden[0]) + ", error code: " + str(iBroyden[1]))
 
 
-    ##################################### ii)
+######################################### ii)
     print("")
     print("ii)")
 
@@ -230,6 +230,46 @@ def driver():
     print("Iterations needed for Broyden's Method: " + str(iiBroyden[2]) +\
         ", duration ran: " + str(iiBroydenDuration) + ", approximated root: " +\
             str(iiBroyden[0]) + ", error code: " + str(iiBroyden[1]))
+    
+######################################### iii)
+    print("")
+    print("iii)")
+
+    # time how long it takes to call nDNewton
+    start = time.time()
+    # x0 = [0, 0]
+    iiiNewton = nDNewton(jnp.array([0., 0.]), F_1, tolerance, 2)
+    end = time.time()
+    iiiNewtonDuration = end - start
+
+    # time how long it takes to call nDLazyNewton
+    start = time.time()
+    # x0 = [0, 0]
+    iiiLazyNewton = nDLazyNewton(jnp.array([0., 0.]), F_1, tolerance, 2)
+    end = time.time()
+    iiiLazyNewtonDuration = end - start
+
+    # time how long it takes to call nDBroyden
+    start = time.time()
+    # x0 = [0, 0]
+    iiiBroyden = nDBroyden(jnp.array([0., 0.]), F_1, tolerance, 2)
+    end = time.time()
+    iiiBroydenDuration = end - start
+
+
+    # print results
+    print("Iterations needed for Newton's Method: " + str(iiiNewton[2]) +\
+        ", duration ran: " + str(iiiNewtonDuration) + ", approximated root: " +\
+            str(iiiNewton[0]) + ", error code: " + str(iiiNewton[1]))
+    print("Iterations needed for Lazy Newton's Method: " +\
+          str(iiiLazyNewton[2]) + ", duration ran: " + \
+            str(iiiLazyNewtonDuration) + ", approximated root: " +\
+                  str(iiiLazyNewton[0]) + ", error code: " +\
+                    str(iiiLazyNewton[1]))
+    print("Iterations needed for Broyden's Method: " + str(iiiBroyden[2]) +\
+        ", duration ran: " + str(iiiBroydenDuration) +\
+            ", approximated root: " + str(iiiBroyden[0]) + ", error code: " +\
+                str(iiiBroyden[1]))
 
 if __name__ == "__main__":
     driver()
