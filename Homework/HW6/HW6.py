@@ -145,6 +145,71 @@ def nDBroyden(x0: jnp.array, F, tol, nMax):
     err = 1
     return [xStar, err, its]
 
+def steepestDescent(x0: jnp.array, g, tol, nMax):
+    '''
+    Approximate a solution that minimizes g(x)
+    Inputs:
+        x0: initial guess, x0 = [x_1, ..., x_n]
+        g: scalar function to minimize
+        tol: tolerance
+        nMax: max iterations
+    Outputs:
+        [x, err, its, g1] where:
+            x: approximate minimum
+            err: error code
+            its: number of iterations run
+            g1: approximated minimum value of g
+    '''
+
+    x = x0
+    
+    for its in range(nMax):
+        g1 = g(x)
+        z = gradient(g, x)
+        z0 = jnp.linalg.norm(z)
+
+        if (z0 == 0):
+            err = 1
+            return [x, err, its, g1]
+        z = z / z0
+        alpha1 = 0
+        alpha3 = 1
+        g3 = g(x - alpha3 * z)
+
+        while (g3 >= g1):
+            alpha3 = alpha3 / 2
+            g3 = g(x - alpha3 * z)
+
+            if (alpha3 < tol / 2):
+                err = 2
+                return [x, err, its, g1]
+        
+        alpha2 = alpha3 / 2
+        g2 = g(x - alpha2 * z)
+
+        h1 = (g2 - g1) / alpha2
+        h2 = (g3 - g2) / (alpha3 - alpha2)
+        h3 = (h2 - h1) / alpha3
+
+        alpha0 = 0.5 * ((alpha2 - h1) / h3)
+        g0 = g(x - alpha0 * z)
+
+        if (g0 <= g3):
+            alpha = alpha0
+            gval = g0
+        else:
+            alpha = alpha3
+            gval = g3
+        
+        x = x - alpha * z
+
+        if (abs(gval - g1) < tol):
+            err = 0
+            return [x, err, its, g1]
+        
+    err = 3
+    return [x, err, its, g1]
+
 
 def driver():
 ############################################################################# 1)
