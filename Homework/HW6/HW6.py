@@ -1,9 +1,7 @@
 ######################################################################## imports
 
-import numpy as np
 import jax
 import jax.numpy as jnp
-import math
 import time
 
 #################################################################### subroutines
@@ -13,11 +11,22 @@ def jacobian(F, x: jnp.array):
     Compute jacobian of F at x
     Inputs:
         F: F = (f_1(x), ..., f_n(x))
-        x: x = (x_1, x_2, ..., x_n)
+        x: x = (x_1, ..., x_n)
     Outputs:
         J: n x n Jacobian matrix of f evaluated at x
     '''
     return jnp.array(jax.jacfwd(F)(x))
+
+def gradient(F, x: jnp.array):
+    '''
+    Computes gradient of scalar-valued F at x
+    Inputs:
+        F: F = (f_1(x), ..., f_n(x))
+        x: x = (x_1, ..., x_n)
+    Outputs:
+
+    '''
+    return jnp.array(jax.grad(F)(x))
 
 
 def nDNewton(x0: jnp.array, F, tol, nMax):
@@ -270,6 +279,9 @@ def driver():
         ", duration ran: " + str(iiiBroydenDuration) +\
             ", approximated root: " + str(iiiBroyden[0]) + ", error code: " +\
                 str(iiiBroyden[1]))
+    
+############################################################################# 2)
+
 
 if __name__ == "__main__":
     driver()
