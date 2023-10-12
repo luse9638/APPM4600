@@ -3,12 +3,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-########################################################################### 3.1)
+#################################################################### subroutines
 
-def f(x):
-    return 1.0 / (1 + (10 * x) ** 2)
-
-def intNode1(N):
+def interpNode1(N):
     '''
     Gives interpolation nodes using formula x_i = -1 + (i - 1)h where
     h = 2 / (N - 1), j = 0, 1, ..., N
@@ -28,7 +25,7 @@ def intNode1(N):
 
 def monomial(x, f):
     '''
-    Compute coefficients for Nth order monomial function p(x) interpolating f(x)
+    Compute coefficients for monomial function p(x) interpolating f(x)
     Inputs:
         x: vector of x-values that p(x) should pass through
         f: function of x to be interpolated
@@ -44,9 +41,9 @@ def monomial(x, f):
     #     [.   .    .     .  ]
     #     [1, x_n, ..., x_n^n]
     V = np.zeros((len(x), len(x)))
-    for i in range(0, len(x)): # rows
-        for j in range(0, len(x)): # cols
-            V[i][j] = x[i] ** j
+    for row in range(0, len(x)): 
+        for col in range(0, len(x)): 
+            V[row][col] = x[row] ** col
 
     # V^-1
     Vinv = np.linalg.inv(V)
@@ -56,23 +53,45 @@ def monomial(x, f):
 
     return a
 
+def p_mon(x, f, n, interpNode):
+    '''
+    Evaluates p, the interpolating monomial for f, at x
+    Inputs:
+        x: value to evaluate at
+        f: function that p interpolates
+        n: number of interpolating nodes to use
+        interpNode: function that creates interpolation nodes
+    Outputs:
+        p: p evaluated at x
+    '''
+    coefficientList = monomial(interpNode(n), f)
+    p = np.zeros((len(x)))
+    for (j, coefficient) in zip(range(0, len(coefficientList)),\
+                                coefficientList):
+        p += coefficient * x ** j
+    return p
+
 
 def driver():
+########################################################################### 3.1)
+    
+    def f(x):
+        '''
+        Evaluates f(x) = 1 / (1 + (10x)^2)
+        '''
+        return 1.0 / (1 + (10 * x) ** 2)
+    
+    
+    
+    # 1000 x values
     x = np.linspace(-1, 1, 1000)
     
     # actual function values of f
     y1 = f(x)
-    
-    # store interpolation function values here
-    y2 = np.zeros((1000))
-    # find coefficients for interpolation function
-    coefficientList = monomial(intNode1(20), f)
-    
-    for i in range(0, 1000):
-        for (j, coefficient) in zip(range(0, len(coefficientList)), coefficientList):
-            y2[i] += coefficient * x[i] ** j
+    # interpolated function
+    y2 = p_mon(x, f, 20, interpNode1)
 
-
+    # upload plots for N = 10
 
     plt.plot(x, y1)
     plt.plot(x, y2)
