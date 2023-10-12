@@ -6,12 +6,12 @@ import matplotlib.pyplot as plt
 #################################################################### subroutines
 def monomial(x, f):
     '''
-    Compute coefficients for monomial function p(x) interpolating f(x)
+    Compute coefficients for monomial expansion function p interpolating f
     Inputs:
         x: vector of x-values that p(x) should pass through
         f: function of x to be interpolated
     Outputs:
-        a: vector of coefficients of size N + 1
+        a: vector of coefficients of size
     '''
 
     # y = [f(x_0), ..., f(x_n)]
@@ -36,7 +36,7 @@ def monomial(x, f):
 
 def p_mon(x, f, n, interpNode):
     '''
-    Evaluates p, the interpolating polynomial using monomials for f, at x
+    Evaluates p, the interpolating monomial expansion for f, at x
     Inputs:
         x: value to evaluate p at
         f: function that p interpolates
@@ -45,7 +45,9 @@ def p_mon(x, f, n, interpNode):
     Outputs:
         p: p evaluated at x
     '''
+    # get monomial coefficients
     coefficientList = monomial(interpNode(n), f)
+    
     p = np.zeros((len(x)))
     for (j, coefficient) in zip(range(0, len(coefficientList)),\
                                 coefficientList):
@@ -94,6 +96,56 @@ def p_lagrange(x, f, n, interpNode):
         p += f(xInt[i]) * L[i]
     
     return p
+
+def dividedDifferences(x, f):
+    '''
+    Computes coefficients for the divided differences function p interpolating f
+    Inputs:
+        x: vector of x-values that p(x) should pass through
+        f: function that p interpolates
+    Outputs:
+        a: vector of coefficients of size (n + 1)
+    '''
+
+    # matrix of dividedDifferences
+    F = np.zeros((len(x), len(x)))
+     
+    # first column is f(x)
+    for i in range(0, len(x)):
+        F[i][0] = f(x[i]) 
+
+    # build rest of matrix
+    for i in range(1, len(x)):
+        for j in range(1, i):
+            F[i][j] = (F[i][j - 1] - F[i - 1][j - 1]) / (x[i] - x[i - j])
+    
+    # coefficients used are values along the diagonal
+    a = []
+    for i in range(0, len(x)):
+        a.append(F[i][i])
+    
+    return a
+
+def p_divided(x, f, n, interpNode):
+    '''
+    Evaluates p, the divided differences interpolating polynomial for f, at x
+    Inputs:
+        x: value to evaluate p at
+        f: function that p interpolates
+        n: number of interpolating nodes to use
+        interpNode: function that creates interpolation nodes
+    Outputs:
+        p: p evaluated at x
+    '''
+
+    # get divided differences coefficients
+    coefficientList = dividedDifferences(interpNode(n), f)
+
+    p = coefficientList[0]
+    for k in range(1, len(coefficientList)):
+        pl = 1
+        for l in range(0, k):
+            return
 
 def driver():
 ########################################################################### 3.1)
