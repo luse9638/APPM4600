@@ -57,6 +57,13 @@ def nDNewton(x0: jnp.array, F, tol, nMax):
     err = 1
     return [xStar, err, its]
 
+############################################################################# 1)
+print("")
+print("Problem 1)")
+
+###################################### i)
+print("")
+print("i)")
 
 # F_1(x, y) = [f_1(x, y), f_2(x, y)]
 # f_1(x, y) = x^2 + y^2 - 4 = 0
@@ -65,6 +72,13 @@ def F_1(x: jnp.array):
     F = []
     F.append(x[0] ** 2 + x[1] ** 2 - 4)
     F.append(jnp.exp(x[0]) + x[1] - 1)
-    
     return jnp.array([F[0], F[1]])
+
+# x0 = [1, 1]
+iNewton = nDNewton(jnp.array([1., 1.]), F_1, 1E-16, 100)
+print("Iterations needed for Newton's Method: " + str(iNewton[2]))
+
+
+
+
 
