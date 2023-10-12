@@ -142,20 +142,20 @@ def nDBroyden(x0: jnp.array, F, tol, nMax):
     A0 = jacobian(F, x0)
     v = F(x0)
     A = jnp.linalg.inv(A0)
-    s = -1 * jnp.dot(A, v)
+    s = -A.dot(v)
     xk = x0 + s
 
     for its in range(1, nMax + 1):
         w = v
         v = F(xk)
         y = v - w
-        z = -1 * jnp.dot(A, y)
-        p = -1 * jnp.dot(s, z)
+        z = -A.dot(y)
+        p = -jnp.dot(s, z)
         u = jnp.dot(s, A)
         tmp = s + z
         tmp2 = jnp.outer(tmp, u)
         A = (A + (1. / p)) * tmp2
-        s = -1 * jnp.dot(A, v)
+        s = -A.dot(v)
         tmp3 = xk
         xk = xk + s
         if (jnp.linalg.norm(s) < tol):
@@ -384,6 +384,13 @@ def driver():
             ", approximated root: " + str(iiiBroyden[0]) + ", error code: " +\
                 str(iiiBroyden[1]))
     
+    # error code key
+    print("")
+    print("Error code key:")
+    print("0: success")
+    print("1: max iterations exceeded")
+    print("2: next iteration will NaN or inf")
+    
 ############################################################################# 2)
     print("")
     print("Problem 2)")
@@ -427,9 +434,9 @@ def driver():
     # time how long it takes to do steepestDescent and nDNewton method
     start = time.time()
     # x0 = [1/2, 1/2, 1/2]
-    x1 = steepestDescent(jnp.array([0.5, 0.5, 0.5]), G_1, 5e-2,\
-                                    100)[0]
-    threeSteepestNewton = nDNewton(x1, F_2, 1e-6, 100)
+    threeSteepest = steepestDescent(jnp.array([0.5, 0.5, 0.5]), G_1, 5e-2,\
+                                    100)
+    threeNewton = nDNewton(threeSteepest[0], F_2, 1e-6, 100)
     end = time.time()
     threeSteepestNewtonDuration = end - start
 
@@ -442,10 +449,17 @@ def driver():
             ", approximated root: " + str(twoSteepest[0]) + ", error code: " +\
                 str(twoSteepest[1]))
     print("Iterations needed for Steepest Descent followed by Newton's Method:"\
-           + " " + str(threeSteepestNewton[2]) + ", duration ran: " +\
-            str(threeSteepestNewtonDuration) + ", approximated root: " +\
-                str(threeSteepestNewton[0]) + ", error code: " +\
-                    str(threeSteepestNewton[1]))
+           + " " + str(threeSteepest[2]) + " + " + str(threeNewton[2]) +\
+            ", duration ran: " + str(threeSteepestNewtonDuration) +\
+                ", approximated root: " + str(threeNewton[0]) +\
+                    ", error code: " + str(threeNewton[1]))
+    
+    # error code key
+    print("")
+    print("Error code key:")
+    print("0: success")
+    print("1: max iterations exceeded")
+    print("2: next iteration will NaN or inf")
 
 # don't run driver unless HW6.py called from command line
 if __name__ == "__main__":
