@@ -55,9 +55,9 @@ def monomial(x, f):
 
 def p_mon(x, f, n, interpNode):
     '''
-    Evaluates p, the interpolating monomial for f, at x
+    Evaluates p, the interpolating polynomial using monomials for f, at x
     Inputs:
-        x: value to evaluate at
+        x: value to evaluate p at
         f: function that p interpolates
         n: number of interpolating nodes to use
         interpNode: function that creates interpolation nodes
@@ -71,6 +71,19 @@ def p_mon(x, f, n, interpNode):
         p += coefficient * x ** j
     return p
 
+def p_lagrange(x, f, n, interpNode):
+    '''
+    Evaluates p, the lagrange interpolating polynomial for f, at x
+    Inputs:
+        x: value to evaluate p at
+        f: function that p interpolates
+        n: number of interpolating nodes to use
+        interpNode: function that creates interpolation nodes
+    Outputs:
+        p: p evaluated at x
+    '''
+
+    # 
 
 def driver():
 ########################################################################### 3.1)
