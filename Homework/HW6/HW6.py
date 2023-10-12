@@ -94,6 +94,48 @@ def nDLazyNewton(x0: jnp.array, F, tol, nMax):
     err = 1
     return [xStar, err, its]
 
+def nDBroyden(x0: jnp.array, F, tol, nMax):
+    '''
+    Run Broyden's method on a vector-valued function F
+    Inputs:
+        x0: initial guess, x0 = (x_1, ..., x_n)
+        F: F = (f_1(x), ..., f_n(x))
+        tol: tolerance
+        nMax: max iterations
+    Outputs:
+        [xStar, err, its] where:
+            xStar: approximate root
+            err: error message
+            its: number of iterations run
+    '''
+
+    A0 = jacobian(F, x0)
+    v = F(x0)
+    A = jnp.linalg.inv(A0)
+    s = jnp.dot(-1 * A, v)
+    xk = x0 + s
+
+    for its in range(nMax):
+        w = v
+        v = F(xk)
+        y = v - w
+        z = jnp.dot(-1 * A, y)
+        p = -1 * jnp.dot(s, z)
+        u = jnp.dot(s, A)
+        tmp = s + z
+        tmp2 = jnp.outer(tmp, u)
+        A = (A + 1.) / (p * tmp2)
+        s = jnp.dot(-1 * A, v)
+        xk = xk + s
+        if (jnp.linalg.norm(s) < tol):
+            xStar = xk
+            err = 0
+            return [xStar, err, its]
+        
+    xStar = xk
+    err = 1
+    return [xStar, err, its]
+
 
 ############################################################################# 1)
 print("")
@@ -112,15 +154,38 @@ def F_1(x: jnp.array):
 print("")
 print("i)")
 
+# time how long it takes to call nDNewton
+start = time.time()
 # x0 = [1, 1]
 iNewton = nDNewton(jnp.array([1., 1.]), F_1, 1E-16, 100)
-iLazyNewton = nDLazyNewton(jnp.array([1., 1.]), F_1, 1E-16, 5)
+end = time.time()
+iNewtonDuration = end - start
+
+# time how long it takes to call nDLazyNewton
+start = time.time()
+# x0 = [1, 1]
+iLazyNewton = nDLazyNewton(jnp.array([1., 1.]), F_1, 1E-16, 8)
+end = time.time()
+iLazyNewtonDuration = end - start
+
+# time how long it takes to call nDBroyden
+start = time.time()
+# x0 = [1, 1]
+iBroyden = nDBroyden(jnp.array([1., 1.]), F_1, 1E-16, 3)
+end = time.time()
+iBroydenDuration = end - start
+
+
+# print results
 print("Iterations needed for Newton's Method: " + str(iNewton[2]) +\
-      ", approximated root: " + str(iNewton[0]) + ", error code: " +\
-        str(iNewton[1]))
+      ", duration ran: " + str(iNewtonDuration) + ", approximated root: " +\
+        str(iNewton[0]) + ", error code: " + str(iNewton[1]))
 print("Iterations needed for Lazy Newton's Method: " + str(iLazyNewton[2]) +\
-      ", approximated root: " + str(iLazyNewton[0]) + ", error code: " +\
-        str(iLazyNewton[1]))
+      ", duration ran: " + str(iLazyNewtonDuration) + ", approximated root: " +\
+        str(iLazyNewton[0]) + ", error code: " + str(iLazyNewton[1]))
+print("Iterations needed for Broyden's Method: " + str(iBroyden[2]) +\
+      ", duration ran: " + str(iBroydenDuration) + ", approximated root: " +\
+        str(iBroyden[0]) + ", error code: " + str(iBroyden[1]))
 
 
 ##################################### ii)
