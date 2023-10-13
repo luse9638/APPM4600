@@ -176,23 +176,30 @@ def driver():
     # 1000 x values
     x = np.linspace(-1, 1, 1000)
 
-    N = 30
+    N = 20
     
     # actual function values of f
     y1 = f(x)
     # monomial interpolated function
     y2 = p_mon(x, f, N, interpNode1)
+    y2err = np.abs(y2 - y1)
     # lagrange polynomial interpolated function
     y3 = p_lagrange(x, f, N, interpNode1)
+    y3err = np.abs(y3 - y1)
 
     # upload plots for N = 10
 
     # time to plot!
+    plt.figure()
     plt.plot(x, y1)
     plt.plot(x, y2)
     plt.plot(x, y3)
     plt.ylim(-3, 3)
     plt.legend(["Original", "Monomial", "Lagrange"])
+    plt.figure()
+    plt.plot(x, y2err)
+    plt.plot(x, y3err)
+    plt.legend(["Monomial errror", "Lagrange error"])
     plt.show()
 
 
