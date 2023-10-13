@@ -219,16 +219,17 @@ def driver():
             x1[i] = np.cos(((2 * i - 1) * np.pi) / (2 * N))
         return x1
     
-    y4 = p_mon(x, f, N, interpNode2)
-    y4err = np.abs(y4 - y1)
-    plt.figure()
-    plt.plot(x, y1)
-    plt.plot(x, y4)
-    plt.ylim(-3, 3)
-    plt.legend(["Original", "Lagrange"])
-    plt.figure()
-    plt.plot(x, y4err)
-    plt.legend(["Lagrange error"])
+    # y4 = p_mon(x, f, N, interpNode2)
+    # y4err = np.abs(y4 - y1)
+    # plt.figure()
+    # plt.plot(x, y1)
+    # plt.plot(x, y4)
+    # plt.ylim(-3, 3)
+    # plt.legend(["Original", "Lagrange"])
+    # plt.figure()
+    # plt.plot(x, y4err)
+    # plt.legend(["Lagrange error"])
+    plt.show()
     
 
 
