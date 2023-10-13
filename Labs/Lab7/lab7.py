@@ -200,7 +200,36 @@ def driver():
     plt.plot(x, y2err)
     plt.plot(x, y3err)
     plt.legend(["Monomial errror", "Lagrange error"])
-    plt.show()
+
+########################################################################### 3.2)
+
+    def interpNode2(N):
+        '''
+        Gives interpolation nodes using formula x_i = cos(((2j - 1)pi) / (2N))
+        for j = 0, ..., N
+        Inputs:
+            N: creates N + 1 interpolation nodes
+        Outputs:
+            x1: vector of x values to be used as interpolation nodes
+        '''
+
+        x1 = np.zeros((N + 1))
+        
+        for i in range(0, N + 1):
+            x1[i] = np.cos(((2 * i - 1) * np.pi) / (2 * N))
+        return x1
+    
+    y4 = p_mon(x, f, N, interpNode2)
+    y4err = np.abs(y4 - y1)
+    plt.figure()
+    plt.plot(x, y1)
+    plt.plot(x, y4)
+    plt.ylim(-3, 3)
+    plt.legend(["Original", "Lagrange"])
+    plt.figure()
+    plt.plot(x, y4err)
+    plt.legend(["Lagrange error"])
+    
 
 
 if (__name__ == "__main__"):
