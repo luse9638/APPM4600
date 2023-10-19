@@ -50,9 +50,7 @@ def driver():
     err2 = abs(y2eval-gex)
     plt.figure("Exercise 3.2) error for y = 1 / (1 + (10x)^2)")
     plt.plot(x2eval,err2,'go-')
-    plt.show()
-
-    
+    #plt.show()
     
 def interpNode1(N):
         '''
@@ -71,9 +69,8 @@ def interpNode1(N):
             x1[i] = -1 + (i - 1) * h
 
         return x1
-    
-    
-def  eval_lin_spline(xeval,Neval,a,b,f,Nint):
+      
+def eval_lin_spline(xeval,Neval,a,b,f,Nint):
 
     '''create the intervals for piecewise approximations'''
     xint = np.linspace(a,b,Nint+1)
@@ -108,6 +105,27 @@ def  eval_lin_spline(xeval,Neval,a,b,f,Nint):
 def lineEval(x0, y0, x1, y1, x):
     m = (y1 - y0) / (x1 - x0)
     return m * (x - x1) + y1
+
+def cubicEval(x0, y0, x1, y1, x):
+  return True
+
+def cubicCoefficients(n):
+  coefList = []
+  coefList.append(0) # M0 = 0
+  A = np.zeros([n - 1, n - 1])
+  for i in range(0, n - 1):
+      for j in range(0, n - 1):
+          if (i == j):
+              A[i][j] = 1. / 3
+          if (j == i + 1):
+              A[i][j] = 1. / 12
+          if (j == i - 1):
+              A[i][j] = 1. / 12
+  print(A)
+          
+
+cubicCoefficients(5)
+
 
            
            
