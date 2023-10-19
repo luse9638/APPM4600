@@ -11,7 +11,7 @@ def driver():
     b = 1
     
     ''' create points you want to evaluate at'''
-    Neval = 20
+    Neval = 100
     xeval =  np.linspace(a,b,Neval)
     
     ''' number of intervals'''
@@ -26,18 +26,51 @@ def driver():
     for j in range(Neval):
       fex[j] = f(xeval[j]) 
       
-    plt.figure()
+    plt.figure("Exercise 3.1) y = e^x")
     plt.plot(xeval,fex,'ro-')
     plt.plot(xeval,yeval,'bs-')
-    #plt.legend()
      
     err = abs(yeval-fex)
-    plt.figure()
+    plt.figure("Exercise 3.1) error for y = e^x")
     plt.plot(xeval,err,'go-')
-    plt.show()
-    
-    
 
+    g = lambda x: 1 / (1 + (10 * x) ** 2)
+    a = -1
+    b = 1
+    x2eval = interpNode1(Neval - 1)
+    y2eval = eval_lin_spline(x2eval,Neval,a,b,g,Nint)
+    gex = np.zeros(Neval)
+    for j in range(Neval):
+      gex[j] = g(x2eval[j]) 
+
+    plt.figure("Exercise 3.2) y = 1 / (1 + (10x)^2)")
+    plt.plot(x2eval,gex,'ro-')
+    plt.plot(x2eval,y2eval,'bs-')
+     
+    err2 = abs(y2eval-gex)
+    plt.figure("Exercise 3.2) error for y = 1 / (1 + (10x)^2)")
+    plt.plot(x2eval,err2,'go-')
+    plt.show()
+
+    
+    
+def interpNode1(N):
+        '''
+        Gives interpolation nodes using formula x_i = -1 + (i - 1)h where
+        h = 2 / (N - 1), j = 0, 1, ..., N
+        Inputs:
+            N: creates N + 1 interpolation nodes
+        Outputs:
+            x1: vector of x values to be used as interpolation nodes
+        '''
+
+        x1 = np.zeros((N + 1))
+        h = 2.0 / (N - 1)
+        
+        for i in range(0, N + 1):
+            x1[i] = -1 + (i - 1) * h
+
+        return x1
     
     
 def  eval_lin_spline(xeval,Neval,a,b,f,Nint):
