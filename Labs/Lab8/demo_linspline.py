@@ -11,7 +11,7 @@ def driver():
     b = 1
     
     ''' create points you want to evaluate at'''
-    Neval = 100
+    Neval = 20
     xeval =  np.linspace(a,b,Neval)
     
     ''' number of intervals'''
@@ -19,23 +19,22 @@ def driver():
     
     '''evaluate the linear spline'''
     yeval = eval_lin_spline(xeval,Neval,a,b,f,Nint)
+    #print(yeval)
     
     ''' evaluate f at the evaluation points'''
     fex = np.zeros(Neval)
     for j in range(Neval):
       fex[j] = f(xeval[j]) 
       
-    
     plt.figure()
     plt.plot(xeval,fex,'ro-')
     plt.plot(xeval,yeval,'bs-')
-    plt.legend()
-    plt.show 
+    #plt.legend()
      
     err = abs(yeval-fex)
     plt.figure()
-    plt.plot(xeval,err,'ro-')
-    plt.show 
+    plt.plot(xeval,err,'go-')
+    plt.show()
     
     
 
@@ -51,7 +50,9 @@ def  eval_lin_spline(xeval,Neval,a,b,f,Nint):
     
     
     for jint in range(Nint):
-        '''find indices of xeval in interval (xint(jint),xint(jint+1))'''
+        '''TODO fix this: find indices of xeval in interval (xint(jint),xint(jint+1))'''
+        ind = [i for i in range(len(xeval)) if (xeval[i] >= xint[jint] and xeval[i] <= xint[jint + 1])]
+        n = len(ind)
         '''let ind denote the indices in the intervals'''
         '''let n denote the length of ind'''
         
@@ -63,10 +64,18 @@ def  eval_lin_spline(xeval,Neval,a,b,f,Nint):
         fb1 = f(b1)
         
         for kk in range(n):
-           '''use your line evaluator to evaluate the lines at each of the points 
+           '''TODO: use your line evaluator to evaluate the lines at each of the points 
            in the interval'''
            '''yeval(ind(kk)) = call your line evaluator at xeval(ind(kk)) with 
            the points (a1,fa1) and (b1,fb1)'''
+           yeval[ind[kk]] = lineEval(a1, fa1, b1, fb1, xeval[ind[kk]])
+      
+    return yeval
+
+def lineEval(x0, y0, x1, y1, x):
+    m = (y1 - y0) / (x1 - x0)
+    return m * (x - x1) + y1
+
            
            
 if __name__ == '__main__':
