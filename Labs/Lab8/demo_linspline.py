@@ -37,7 +37,8 @@ def driver():
     g = lambda x: 1 / (1 + (10 * x) ** 2)
     a = -1
     b = 1
-    x2eval = interpNode1(Neval - 1)
+    x2eval = np.linspace(a, b, Neval)
+    cubicCoefficients(x2eval, a, b, g, Nint, Neval)
     y2eval = eval_lin_spline(x2eval,Neval,a,b,g,Nint)
     gex = np.zeros(Neval)
     for j in range(Neval):
@@ -109,22 +110,42 @@ def lineEval(x0, y0, x1, y1, x):
 def cubicEval(x0, y0, x1, y1, x):
   return True
 
-def cubicCoefficients(n):
+def cubicCoefficients(xeval, a, b, f, Nint, Neval):
+  
+  '''create the intervals for piecewise approximations'''
+  xint = np.linspace(a,b,Nint+1)
+  xintint = []
+
+  '''create vector to store the evaluation of the linear splines'''
+  yeval = np.zeros(Neval)
+  for jint in range(Nint):
+        for val in xeval:
+            if val >= xint[jint] and val <= xint[jint + 1]:
+                xintint.append(val)
+  print(xintint)
+
+  print(xintint)
+  
+  nodeCount = Nint + 1
   coefList = []
   coefList.append(0) # M0 = 0
-  A = np.zeros([n - 1, n - 1])
-  for i in range(0, n - 1):
-      for j in range(0, n - 1):
+  A = np.zeros([nodeCount - 1, nodeCount - 1])
+  for i in range(0, nodeCount - 1):
+      for j in range(0, nodeCount - 1):
           if (i == j):
               A[i][j] = 1. / 3
           if (j == i + 1):
               A[i][j] = 1. / 12
           if (j == i - 1):
               A[i][j] = 1. / 12
-  print(A)
-          
+  b = np.zeros([nodeCount - 1])
+#   for i in range(0, len(b)):
+#       b[i] = (fxeval[i + 2] - 2 * fxeval[i + 1] + fxeval[i]) / (2 * h)
 
-cubicCoefficients(5)
+  x = np.linalg.solve(A, b)
+  print(x)
+      
+    
 
 
            
