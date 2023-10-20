@@ -23,6 +23,25 @@ def interpNode1(N):
         x1[i] = -1 + ((i + 1) - 1) * h
     return x1
 
+def interpNode2(N):
+    '''
+    Gives interpolation nodes using formula x_j = cos(((2j - 1)pi) / (2N))
+    for j = 1, ..., N (N interpolation nodes)
+    Inputs:
+        N: creates N + 1 interpolation nodes
+    Outputs:
+        x1: vector of x values to be used as interpolation nodes
+    '''
+
+    x1 = np.zeros((N))
+    i = np.arange(1, N + 1, 1)
+    x1 = np.cos(((2 * i) - 1) * np.pi / (2 * N))
+    
+    # # x1[0] == x_1, ..., x[N - 1] == x_N
+    # for i in range(0, N): # [0, N - 1], N iterations
+    #     x1[i] = np.cos(((2 * i - 1) * np.pi) / (2 * N))
+    return x1
+
 def monomial(x, f):
     '''
     Compute coefficients for monomial expansion function p interpolating f
@@ -166,7 +185,29 @@ plt.plot(x0, y0)
 y5 = p_bary(x0, f1, N4, interpNode1)
 plt.plot(x0, y5)
 plt.legend(["f(x)", "p_19(x)"])
+
+##################################################################### Problem 3)
+print("Problem 3)")
+
+# y0 = f1(x0)
+plt.figure("Problem 3): f(x), p_10(x), p_30(x), p_50(x)")
+plt.plot(x0, y0)
+
+# y6 = p_bary(x0), N = 10
+y6 = p_bary(x0, f1, 10, interpNode2)
+plt.plot(x0, y6)
+
+# y7 = p_bary(x0), N = 30
+y7 = p_bary(x0, f1, 30, interpNode2)
+plt.plot(x0, y7)
+
+# y8 = p_bary(x0), N = 50
+y8 = p_bary(x0, f1, 50, interpNode2)
+plt.plot(x0, y8)
+plt.legend(["f(x)", "p_10(x)", "p_30(x)", "p_50(x)"])
 plt.show()
+
+
 
 
 
