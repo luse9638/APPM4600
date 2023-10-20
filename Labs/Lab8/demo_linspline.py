@@ -15,7 +15,7 @@ def driver():
     xeval =  np.linspace(a,b,Neval)
     
     ''' number of intervals'''
-    Nint = 10
+    Nint = 5
     
     '''evaluate the linear spline'''
     yeval = eval_lin_spline(xeval,Neval,a,b,f,Nint)
@@ -38,7 +38,7 @@ def driver():
     a = -1
     b = 1
     x2eval = np.linspace(a, b, Neval)
-    cubicCoefficients(x2eval, a, b, g, Nint, Neval)
+    cubeCoeff(a, b, g, Nint)
     y2eval = eval_lin_spline(x2eval,Neval,a,b,g,Nint)
     gex = np.zeros(Neval)
     for j in range(Neval):
@@ -107,43 +107,44 @@ def lineEval(x0, y0, x1, y1, x):
     m = (y1 - y0) / (x1 - x0)
     return m * (x - x1) + y1
 
-def cubicEval(x0, y0, x1, y1, x):
-  return True
+def cubeCoeff(a, b, f, Nint):
+    xint = np.linspace(a, b, Nint + 1)
+    yint = f(xint)
+    
+    h = np.zeros(Nint)
+    for i in range(0, Nint): # [0, Nint - 1], Nint iterations
+        h[i] = xint[i + 1] - xint[i]
+    
+    alpha = np.zeros(Nint - 1)
+    for i in range(1, Nint): # [1, Nint - 1], (Nint - 1) iterations
+        alpha[i] = (3 / h[i]) * (yint[i + 1] - yint[i]) -\
+            (3 / h[i - 1]) * (yint[i] - yint[i - 1])
+    
+    l = np.zeros(Nint)
+    l[0] = 0
+    mu = np.zeros(Nint)
+    mu[0] = 0
+    z = np.zeros(Nint)
+    z[0] = 0
+    for i in range(1, Nint): # [1, Nint - 1], Nint - 1 values
+        l[i] = 2 * (xint[i + 1] - xint[i - 1]) - (h[i - 1] * mu[i - 1])
+        mu[i] = h[i] / l[i]
+        z[i] = (alpha[i] - (h[i - 1] * z[i - 1])) / l[i]
 
-def cubicCoefficients(xeval, a, b, f, Nint, Neval):
-  
-  '''create the intervals for piecewise approximations'''
-  xint = np.linspace(a,b,Nint+1)
-  xintint = []
+    c = np.zeros(Nint + 1)
+    c[-1] = 0
+    b = np.zeros(Nint)
+    d = np.zeros(Nint)
+    for j in range(Nint - 1, -1, -1): # [0, Nint - 1], backwards, Nint iterations
+        c[j] = z[j] - (mu[j] * c[j + 1])
+        b[j] = ((yint[j + 1] - yint[j]) / h[j]) - (h[j] * (c[j + 1] + 2 * c[j]) * (1/3))
+        d[j] = (c[j + 1] - c[j]) / (3 * h[j])
+    
 
-  '''create vector to store the evaluation of the linear splines'''
-  yeval = np.zeros(Neval)
-  for jint in range(Nint):
-        for val in xeval:
-            if val >= xint[jint] and val <= xint[jint + 1]:
-                xintint.append(val)
-  print(xintint)
 
-  print(xintint)
-  
-  nodeCount = Nint + 1
-  coefList = []
-  coefList.append(0) # M0 = 0
-  A = np.zeros([nodeCount - 1, nodeCount - 1])
-  for i in range(0, nodeCount - 1):
-      for j in range(0, nodeCount - 1):
-          if (i == j):
-              A[i][j] = 1. / 3
-          if (j == i + 1):
-              A[i][j] = 1. / 12
-          if (j == i - 1):
-              A[i][j] = 1. / 12
-  b = np.zeros([nodeCount - 1])
-#   for i in range(0, len(b)):
-#       b[i] = (fxeval[i + 2] - 2 * fxeval[i + 1] + fxeval[i]) / (2 * h)
 
-  x = np.linalg.solve(A, b)
-  print(x)
+#   x = np.linalg.solve(A, b)
+#   print(x)
       
     
 
