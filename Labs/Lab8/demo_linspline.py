@@ -15,7 +15,7 @@ def driver():
     xeval =  np.linspace(a,b,Neval)
     
     ''' number of intervals'''
-    Nint = 5
+    Nint = 10
     
     '''evaluate the linear spline'''
     yeval = eval_lin_spline(xeval,Neval,a,b,f,Nint)
@@ -37,21 +37,28 @@ def driver():
     g = lambda x: 1 / (1 + (10 * x) ** 2)
     a = -1
     b = 1
-    x2eval = np.linspace(a, b, Neval)
-    cubeCoeff(a, b, g, Nint)
-    y2eval = eval_lin_spline(x2eval,Neval,a,b,g,Nint)
+    xeval =  np.linspace(a,b,Neval)
+    y2eval = eval_lin_spline(xeval,Neval,a,b,g,Nint)
     gex = np.zeros(Neval)
     for j in range(Neval):
-      gex[j] = g(x2eval[j]) 
+      gex[j] = g(xeval[j]) 
 
     plt.figure("Exercise 3.2) y = 1 / (1 + (10x)^2)")
-    plt.plot(x2eval,gex,'ro-')
-    plt.plot(x2eval,y2eval,'bs-')
+    plt.plot(xeval,gex,'ro-')
+    plt.plot(xeval,y2eval,'bs-')
      
     err2 = abs(y2eval-gex)
     plt.figure("Exercise 3.2) error for y = 1 / (1 + (10x)^2)")
-    plt.plot(x2eval,err2,'go-')
-    #plt.show()
+    plt.plot(xeval,err2,'go-')
+    
+    plt.figure("Exercise 3.4)")
+    a = -1
+    b = 1
+    xeval =  np.linspace(a,b,Neval)
+    y3eval = eval_cube_spline(xeval, Neval, a, b, g, Nint)
+    plt.plot(xeval, gex)
+    plt.plot(xeval, y3eval)
+    plt.show()
     
 def interpNode1(N):
         '''
@@ -115,7 +122,7 @@ def cubeCoeff(a, b, f, Nint):
     for i in range(0, Nint): # [0, Nint - 1], Nint iterations
         h[i] = xint[i + 1] - xint[i]
     
-    alpha = np.zeros(Nint - 1)
+    alpha = np.zeros(Nint)
     for i in range(1, Nint): # [1, Nint - 1], (Nint - 1) iterations
         alpha[i] = (3 / h[i]) * (yint[i + 1] - yint[i]) -\
             (3 / h[i - 1]) * (yint[i] - yint[i - 1])
@@ -139,7 +146,34 @@ def cubeCoeff(a, b, f, Nint):
         c[j] = z[j] - (mu[j] * c[j + 1])
         b[j] = ((yint[j + 1] - yint[j]) / h[j]) - (h[j] * (c[j + 1] + 2 * c[j]) * (1/3))
         d[j] = (c[j + 1] - c[j]) / (3 * h[j])
-    
+
+    return [yint, b, c, d]
+
+def cubeEval(a, b, c, d, xj, x):
+    return a + b * (x - xj) + c * ((x - xj) ** 2) + d * ((x - xj) ** 3)
+
+def eval_cube_spline(xeval, Neval, a, b, f, Nint):
+    coeffList = cubeCoeff(a, b, f, Nint)
+    aList, bList, cList, dList = coeffList[0], coeffList[1], coeffList[2],\
+    coeffList[3]
+
+    xint = np.linspace(a, b, Nint + 1)
+    yeval = np.zeros(Neval) 
+
+    for jint in range(Nint):
+        '''TODO fix this: find indices of xeval in interval (xint(jint),xint(jint+1))'''
+        ind = [i for i in range(len(xeval)) if (xeval[i] >= xint[jint] and xeval[i] <= xint[jint + 1])]
+        n = len(ind)
+
+        for kk in range(n):
+           '''TODO: use your line evaluator to evaluate the lines at each of the points 
+           in the interval'''
+           '''yeval(ind(kk)) = call your line evaluator at xeval(ind(kk)) with 
+           the points (a1,fa1) and (b1,fb1)'''
+           yeval[ind[kk]] = cubeEval(aList[jint], bList[jint], cList[jint],\
+                                     dList[jint], xint[jint], xeval[ind[kk]])
+           
+    return yeval
 
 
 
