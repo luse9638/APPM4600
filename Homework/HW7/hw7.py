@@ -159,13 +159,15 @@ plt.legend(["f(x)", "p_19(x)"])
 print("Problem 2)")
 
 # y0 = f1(x0)
-plt.figure("Problem 2)")
+plt.figure("Problem 2): f(x), p_19(x)")
 plt.plot(x0, y0)
 
-# y5 = p_bary(x5), N = 5
-y5 = p_bary(x0, f1, 20, interpNode1)
+# y5 = p_bary(x0), N = 19
+y5 = p_bary(x0, f1, N4, interpNode1)
 plt.plot(x0, y5)
+plt.legend(["f(x)", "p_19(x)"])
 plt.show()
+
 
 
 
