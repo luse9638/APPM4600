@@ -29,9 +29,10 @@ def driver():
     plt.figure("Exercise 3.1) y = e^x")
     plt.plot(xeval,fex,'ro-')
     plt.plot(xeval,yeval,'bs-')
+    plt.legend(["f(x) = e^x", "linear spline"])
      
     err = abs(yeval-fex)
-    plt.figure("Exercise 3.1) error for y = e^x")
+    plt.figure("Exercise 3.1) error for y = e^x with linear spline")
     plt.plot(xeval,err,'go-')
 
     g = lambda x: 1 / (1 + (10 * x) ** 2)
@@ -43,21 +44,27 @@ def driver():
     for j in range(Neval):
       gex[j] = g(xeval[j]) 
 
-    plt.figure("Exercise 3.2) y = 1 / (1 + (10x)^2)")
+    plt.figure("Exercise 3.2) f(x) = 1 / (1 + (10x)^2)")
     plt.plot(xeval,gex,'ro-')
     plt.plot(xeval,y2eval,'bs-')
+    plt.legend(["f(x)", "linear spline"])
      
     err2 = abs(y2eval-gex)
-    plt.figure("Exercise 3.2) error for y = 1 / (1 + (10x)^2)")
+    plt.figure("Exercise 3.2) error for f(x) = 1 / (1 + (10x)^2) with linear spline")
     plt.plot(xeval,err2,'go-')
     
-    plt.figure("Exercise 3.4)")
+    plt.figure("Exercise 3.4): f(x) = 1 / (1 + (10x)^2)")
     a = -1
     b = 1
     xeval =  np.linspace(a,b,Neval)
     y3eval = eval_cube_spline(xeval, Neval, a, b, g, Nint)
     plt.plot(xeval, gex)
     plt.plot(xeval, y3eval)
+    plt.legend(["f(x)", "cubic spline"])
+    
+    err3 = abs(y3eval-gex)
+    plt.figure("Exercise 3.4): error for f(x) = 1 / (1 + (10x)^2) with cubic spline")
+    plt.plot(xeval,err2,'go-')
     plt.show()
     
 def interpNode1(N):
