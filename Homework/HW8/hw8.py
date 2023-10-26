@@ -13,7 +13,7 @@ def equiNodes(a, b, n):
     x = np.linspace(a, b, n)
     return x
 
-def p_lagrange(x, f, n, interpNode):
+def p_lagrange(x, f, xInt):
     '''
     Evaluates p, the lagrange interpolating polynomial for f, at x
     Inputs:
@@ -26,14 +26,13 @@ def p_lagrange(x, f, n, interpNode):
     '''
 
     # interpolation node vectors
-    xInt = interpNode(n)
 
     # vector of individual Lagrange functions
     # L = [L_n1, ..., L_nk, ..., Lnn]
     L = []
     
     # build the kth Lagrange function (n + 1) functions
-    for k in range(0, n + 1):
+    for k in range(0, len(xInt)):
         # L_nk(x) = 
         # ((x - x_0) * ... * (x - x_k-1) * (x - x_k+1) * ... * (x - x_n)) /
         # ((x_k - x_0) * ... * (x_k - x_k-1) * (x_k - x_k+1) * ... * (x_k - x_n)
@@ -41,7 +40,7 @@ def p_lagrange(x, f, n, interpNode):
         # go term by term through numerator and denominator (n + 1 terms)
         L_k_numerator = 1.0
         L_k_denominator = 1.0
-        for i in range(0, n + 1):
+        for i in range(0, len(xInt)):
             if (i != k):
                 L_k_numerator *= (x - xInt[i])
                 L_k_denominator *= (xInt[k] - xInt[i])
@@ -69,11 +68,16 @@ def f1(x):
 xEval = np.linspace(-5, 5, 1000)
 # actual function evaluation
 f1Eval = f1(xEval)
+# Lagrange interpolation, n = 5
+xEquiInterp5 = equiNodes(-5, 5, 5)
+f1LagrangeEval5 = p_lagrange(xEval, f1, xEquiInterp5)
 
-#f1LagrangeEval = p_lagrange(xEval, f1, 5, equiNodes)
-
+# n = 5 plots
+plt.figure("Problem 1) 5 nodes")
 # plot actual function
 plt.plot(xEval, f1Eval)
+# plot Lagrange interpolation, n = 5
+plt.plot(xEval, f1LagrangeEval5)
 plt.show()
 
 
