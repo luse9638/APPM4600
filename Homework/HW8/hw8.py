@@ -60,7 +60,6 @@ def pHermite(x, f, xInt):
     Inputs:
         x: value to evaluate p at
         f: function that p interpolates
-        n: number of interpolating nodes to use
         xInt: vector of interpolation nodes
     Outputs:
         p: Hermite interpolation evaluated at x
@@ -87,14 +86,23 @@ def pHermite(x, f, xInt):
 
     # create divided difference coefficients
     for i in range(2, 2 * len(xInt)):
-        for j in range(2, i): 
+        for j in range(2, i + 1): 
             Q[i][j] = (Q[i][j - 1] - Q[i - 1][j - 1]) / (z[i] - z[i - j])
     
     coefficientList = np.zeros(2 * len(xInt))
     for i in range(0, len(Q[0])):
         coefficientList[i] = Q[i][i]
 
-    eval = f[z[0]]  
+    eval = f(z[0])
+    for k in range(1, len(coefficientList)):
+        term = coefficientList[k]
+        for l in range(0, k):
+            index = int(np.floor(l / 2))
+            term *= (x - xInt[index])
+        eval += term
+
+    return eval
+       
 
 ##################################################################### Problem 1)
 print("Problem 1)")
@@ -109,9 +117,15 @@ def f1(x):
 xEval = np.linspace(-5, 5, 1000)
 # actual function evaluation
 f1Eval = f1(xEval)
-# Lagrange interpolation, n = 5
+
+# 5 equispace nodes
 xEquiInterp5 = equiNodes(-5, 5, 5)
+
+# Lagrange interpolation, n = 5
 f1LagrangeEval5 = pLagrange(xEval, f1, xEquiInterp5)
+
+# Hermite interpolation, n = 5
+f1HermiteEval5 = pHermite(xEval, f1, xEquiInterp5)
 
 # n = 5 plots
 plt.figure("Problem 1) 5 nodes")
@@ -119,10 +133,10 @@ plt.figure("Problem 1) 5 nodes")
 plt.plot(xEval, f1Eval)
 # plot Lagrange interpolation, n = 5
 plt.plot(xEval, f1LagrangeEval5)
-#plt.show()
+# plot Hermite interpolation, n = 5
+plt.plot(xEval, f1HermiteEval5)
+plt.show()
 
 
 def fTest(x):
     return 
-
-print(pHermite(0, f1, xEquiInterp5))
