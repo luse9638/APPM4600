@@ -103,6 +103,93 @@ def pHermite(x, f, xInt):
 
     return eval
        
+def natCubeSplineCoeff(a, b, f, Nint):
+    xint = np.linspace(a, b, Nint + 1)
+    yint = f(xint)
+    
+    h = np.zeros(Nint)
+    for i in range(0, Nint): # [0, Nint - 1], Nint iterations
+        h[i] = xint[i + 1] - xint[i]
+    
+    alpha = np.zeros(Nint)
+    for i in range(1, Nint): # [1, Nint - 1], (Nint - 1) iterations
+        alpha[i] = (3 / h[i]) * (yint[i + 1] - yint[i]) -\
+            (3 / h[i - 1]) * (yint[i] - yint[i - 1])
+    
+    l = np.zeros(Nint)
+    l[0] = 0
+    mu = np.zeros(Nint)
+    mu[0] = 0
+    z = np.zeros(Nint)
+    z[0] = 0
+    for i in range(1, Nint): # [1, Nint - 1], Nint - 1 values
+        l[i] = 2 * (xint[i + 1] - xint[i - 1]) - (h[i - 1] * mu[i - 1])
+        mu[i] = h[i] / l[i]
+        z[i] = (alpha[i] - (h[i - 1] * z[i - 1])) / l[i]
+
+    c = np.zeros(Nint + 1)
+    c[-1] = 0
+    b = np.zeros(Nint)
+    d = np.zeros(Nint)
+    for j in range(Nint - 1, -1, -1): # [0, Nint - 1], backwards, Nint iterations
+        c[j] = z[j] - (mu[j] * c[j + 1])
+        b[j] = ((yint[j + 1] - yint[j]) / h[j]) - (h[j] * (c[j + 1] + 2 * c[j]) * (1/3))
+        d[j] = (c[j + 1] - c[j]) / (3 * h[j])
+
+    return [yint, b, c, d]
+
+def clampCubeSplineCoeff(a, b, f, Nint):
+    xint = np.linspace(a, b, Nint + 1)
+    yint = f(xint)
+    fPrime = jax.grad(f)
+    FPO = fPrime(xint[0])
+    FPN = fPrime(xint[-1])
+    
+    h = np.zeros(Nint)
+    for i in range(0, Nint): # [0, Nint - 1], Nint iterations
+        h[i] = xint[i + 1] - xint[i]
+    
+    alpha = np.zeros(Nint)
+    alpha[0] = (3 * (yint[1] - yint[0])) / h[0]
+    alpha[-1] = (3 * FPN) - ((3 * (yint[-1]) - yint[-2])) / (h[-2])
+    for i in range(1, Nint): # [1, Nint - 1], (Nint - 1) iterations
+        alpha[i] = (3 / h[i]) * (yint[i + 1] - yint[i]) -\
+            (3 / h[i - 1]) * (yint[i] - yint[i - 1])
+        
+    
+
+
+def cubeEval(a, b, c, d, xj, x):
+    return a + b * (x - xj) + c * ((x - xj) ** 2) + d * ((x - xj) ** 3)
+
+def evalCubeSpline(xeval, a, b, f, Nint, opt):
+    if (opt == "natural"):
+        coeffList = natCubeSplineCoeff(a, b, f, Nint)
+    elif (opt == "clamped"):
+        coeffList = []
+    else:
+        print("Error in determining whether to use natural or clamped spline")
+        return None
+    aList, bList, cList, dList = coeffList[0], coeffList[1], coeffList[2],\
+    coeffList[3]
+
+    xint = np.linspace(a, b, Nint + 1)
+    yeval = np.zeros(len(xeval)) 
+
+    for jint in range(Nint):
+        '''TODO fix this: find indices of xeval in interval (xint(jint),xint(jint+1))'''
+        ind = [i for i in range(len(xeval)) if (xeval[i] >= xint[jint] and xeval[i] <= xint[jint + 1])]
+        n = len(ind)
+
+        for kk in range(n):
+           '''TODO: use your line evaluator to evaluate the lines at each of the points 
+           in the interval'''
+           '''yeval(ind(kk)) = call your line evaluator at xeval(ind(kk)) with 
+           the points (a1,fa1) and (b1,fb1)'''
+           yeval[ind[kk]] = cubeEval(aList[jint], bList[jint], cList[jint],\
+                                     dList[jint], xint[jint], xeval[ind[kk]])
+           
+    return yeval
 
 ##################################################################### Problem 1)
 print("Problem 1)")
@@ -127,14 +214,20 @@ f1LagrangeEval5 = pLagrange(xEval, f1, xEquiInterp5)
 # Hermite interpolation, n = 5
 f1HermiteEval5 = pHermite(xEval, f1, xEquiInterp5)
 
+# Natural cubic spline, n = 5
+f1NatCubeSplineEval = evalCubeSpline(xEval, -5, 5, f1, 4, "natural")
+
+
 # n = 5 plots
 plt.figure("Problem 1) 5 nodes")
 # plot actual function
 plt.plot(xEval, f1Eval)
-# plot Lagrange interpolation, n = 5
+# plot Lagrange interpolation
 plt.plot(xEval, f1LagrangeEval5)
-# plot Hermite interpolation, n = 5
+# plot Hermite interpolation
 plt.plot(xEval, f1HermiteEval5)
+# plot natural cubic spline
+plt.plot(xEval, f1NatCubeSplineEval)
 plt.show()
 
 
