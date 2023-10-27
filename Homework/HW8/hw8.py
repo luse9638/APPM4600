@@ -150,11 +150,37 @@ def clampCubeSplineCoeff(a, b, f, Nint):
         h[i] = xint[i + 1] - xint[i]
     
     alpha = np.zeros(Nint)
-    alpha[0] = (3 * (yint[1] - yint[0])) / h[0]
+    alpha[0] = ((3 * (yint[1] - yint[0])) / h[0]) - 3 * FPO
     alpha[-1] = (3 * FPN) - ((3 * (yint[-1]) - yint[-2])) / (h[-2])
     for i in range(1, Nint): # [1, Nint - 1], (Nint - 1) iterations
         alpha[i] = (3 / h[i]) * (yint[i + 1] - yint[i]) -\
             (3 / h[i - 1]) * (yint[i] - yint[i - 1])
+        
+    l = np.zeros(Nint)
+    l[0] = 2 * h[0]
+    mu = np.zeros(Nint)
+    mu[0] = 1 / 2.0
+    z = np.zeros(Nint)
+    z[0] = alpha[0] / l[0]
+    for i in range(1, Nint): # [1, Nint - 1], Nint - 1 values
+        l[i] = 2 * (xint[i + 1] - xint[i - 1]) - (h[i - 1] * mu[i - 1])
+        mu[i] = h[i] / l[i]
+        z[i] = (alpha[i] - (h[i - 1] * z[i - 1])) / l[i]
+
+    c = np.zeros(Nint + 1)
+    b = np.zeros(Nint)
+    d = np.zeros(Nint)
+    l[-1] = h[-2] * (2 - mu[-2])
+    z[-1] = (alpha[-1] * (h[-2] * z[-2])) / l[-1]
+    c[-1] = z[-1]
+    for j in range(Nint - 1, -1, -1): # [0, Nint - 1], backwards, Nint iterations
+        c[j] = z[j] - (mu[j] * c[j + 1])
+        b[j] = ((yint[j + 1] - yint[j]) / h[j]) - (h[j] * (c[j + 1] + 2 * c[j]) * (1/3))
+        d[j] = (c[j + 1] - c[j]) / (3 * h[j])
+
+    return [yint, b, c, d]
+
+
         
     
 
@@ -166,7 +192,7 @@ def evalCubeSpline(xeval, a, b, f, Nint, opt):
     if (opt == "natural"):
         coeffList = natCubeSplineCoeff(a, b, f, Nint)
     elif (opt == "clamped"):
-        coeffList = []
+        coeffList = clampCubeSplineCoeff(a, b, f, Nint)
     else:
         print("Error in determining whether to use natural or clamped spline")
         return None
@@ -215,7 +241,7 @@ f1LagrangeEval5 = pLagrange(xEval, f1, xEquiInterp5)
 f1HermiteEval5 = pHermite(xEval, f1, xEquiInterp5)
 
 # Natural cubic spline, n = 5
-f1NatCubeSplineEval = evalCubeSpline(xEval, -5, 5, f1, 4, "natural")
+f1NatCubeSplineEval = evalCubeSpline(xEval, -5, 5, f1, 4, "clamped")
 
 
 # n = 5 plots
