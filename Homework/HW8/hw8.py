@@ -150,7 +150,7 @@ def clampCubeSplineCoeff(a, b, f, Nint):
         h[i] = xint[i + 1] - xint[i]
     
     alpha = np.zeros(Nint)
-    alpha[0] = ((3 * (yint[1] - yint[0])) / h[0]) - 3 * FPO
+    alpha[0] = ((3 * (yint[1] - yint[0])) / h[0]) - (3 * FPO)
     alpha[-1] = (3 * FPN) - ((3 * (yint[-1]) - yint[-2])) / (h[-2])
     for i in range(1, Nint): # [1, Nint - 1], (Nint - 1) iterations
         alpha[i] = (3 / h[i]) * (yint[i + 1] - yint[i]) -\
@@ -179,11 +179,6 @@ def clampCubeSplineCoeff(a, b, f, Nint):
         d[j] = (c[j + 1] - c[j]) / (3 * h[j])
 
     return [yint, b, c, d]
-
-
-        
-    
-
 
 def cubeEval(a, b, c, d, xj, x):
     return a + b * (x - xj) + c * ((x - xj) ** 2) + d * ((x - xj) ** 3)
@@ -233,16 +228,39 @@ f1Eval = f1(xEval)
 
 # 5 equispace nodes
 xEquiInterp5 = equiNodes(-5, 5, 5)
+# 10 equispace nodes
+xEquiInterp10 = equiNodes(-5, 5, 10)
+# 15 equispace nodes
+xEquiInterp15 = equiNodes(-5, 5, 15)
+# 20 equispace nodes
+xEquiInterp20 = equiNodes(-5, 5, 20)
 
 # Lagrange interpolation, n = 5
 f1LagrangeEval5 = pLagrange(xEval, f1, xEquiInterp5)
+# Lagrange interpolation, n = 10
+f1LagrangeEval10 = pLagrange(xEval, f1, xEquiInterp10)
+# Lagrange interpolation, n = 15
+f1LagrangeEval15 = pLagrange(xEval, f1, xEquiInterp15)
+# Lagrange interpolation, n = 10
+f1LagrangeEval20 = pLagrange(xEval, f1, xEquiInterp20)
 
 # Hermite interpolation, n = 5
 f1HermiteEval5 = pHermite(xEval, f1, xEquiInterp5)
+# Hermite interpolation, n = 10
+f1HermiteEval10 = pHermite(xEval, f1, xEquiInterp10)
+# Hermite interpolation, n = 15
+f1HermiteEval15 = pHermite(xEval, f1, xEquiInterp15)
+# Hermite interpolation, n = 20
+f1HermiteEval20 = pHermite(xEval, f1, xEquiInterp20)
 
 # Natural cubic spline, n = 5
-f1NatCubeSplineEval = evalCubeSpline(xEval, -5, 5, f1, 4, "clamped")
-
+f1NatCubeSplineEval5 = evalCubeSpline(xEval, -5, 5, f1, 4, "natural")
+# Natural cubic spline, n = 10
+f1NatCubeSplineEval10 = evalCubeSpline(xEval, -5, 5, f1, 9, "natural")
+# Natural cubic spline, n = 15
+f1NatCubeSplineEval15 = evalCubeSpline(xEval, -5, 5, f1, 14, "natural")
+# Natural cubic spline, n = 20
+f1NatCubeSplineEval20 = evalCubeSpline(xEval, -5, 5, f1, 19, "natural")
 
 # n = 5 plots
 plt.figure("Problem 1) 5 nodes")
@@ -253,7 +271,45 @@ plt.plot(xEval, f1LagrangeEval5)
 # plot Hermite interpolation
 plt.plot(xEval, f1HermiteEval5)
 # plot natural cubic spline
-plt.plot(xEval, f1NatCubeSplineEval)
+plt.plot(xEval, f1NatCubeSplineEval5)
+plt.legend(["Original", "Lagrange", "Hermite", "Natural Cubic"])
+
+# n = 10 plots
+plt.figure("Problem 1) 10 nodes")
+# plot actual function
+plt.plot(xEval, f1Eval)
+# plot Lagrange interpolation
+plt.plot(xEval, f1LagrangeEval10)
+# plot Hermite interpolation
+plt.plot(xEval, f1HermiteEval10)
+# plot natural cubic spline
+plt.plot(xEval, f1NatCubeSplineEval10)
+plt.legend(["Original", "Lagrange", "Hermite", "Natural Cubic"])
+
+# n = 15 plots
+plt.figure("Problem 1) 15 nodes")
+# plot actual function
+plt.plot(xEval, f1Eval)
+# plot Lagrange interpolation
+plt.plot(xEval, f1LagrangeEval15)
+# plot Hermite interpolation
+plt.plot(xEval, f1HermiteEval15)
+# plot natural cubic spline
+plt.plot(xEval, f1NatCubeSplineEval15)
+plt.legend(["Original", "Lagrange", "Hermite", "Natural Cubic"])
+
+# n = 20 plots
+plt.figure("Problem 1) 20 nodes")
+# plot actual function
+plt.plot(xEval, f1Eval)
+# plot Lagrange interpolation
+plt.plot(xEval, f1LagrangeEval20)
+# plot Hermite interpolation
+plt.plot(xEval, f1HermiteEval20)
+# plot natural cubic spline
+plt.plot(xEval, f1NatCubeSplineEval20)
+plt.legend(["Original", "Lagrange", "Hermite", "Natural Cubic"])
+
 plt.show()
 
 
