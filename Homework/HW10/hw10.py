@@ -33,7 +33,7 @@ def Tn(f, n, x0, x):
         
     return T6x
 
-def Pnm(f, coeff, n, m, x):
+def Pnm(coeff, n, m, x):
     '''
     Compute the (n/m) Pade approximation of f created using Taylor Series
     coefficients, evaluated at x
@@ -67,7 +67,7 @@ y1Eval = f1(x1Eval)
 f1T6Coeff = [0, 1, 0, (-1 / 6), 0, (1 / 120), 0]
 y1T6Eval = Tn(f1, 6, 0.0, x1Eval)
 
-plt.figure("Problem 1)")
+plt.figure("Problem 1 Graphs")
 plt.title("Sin(x) v its Taylor and some of its Pade Approximations")
 
 # x1Eval v f1(x1Eval)
@@ -75,29 +75,54 @@ plt.plot(x1Eval, y1Eval)
 # x1Eval v T6(x1Eval)
 plt.plot(x1Eval, y1T6Eval)
 
-############################### part a)
+####################################################################### part a)
 
 # P(3/3)(x1Eval)
-y1P33Eval = Pnm(f1, f1T6Coeff, 3, 3, x1Eval)
+y1P33Eval = Pnm(f1T6Coeff, 3, 3, x1Eval)
+print(y1P33Eval)
 
 # x1Eval v P(3/3)(x1Eval)
 plt.plot(x1Eval, y1P33Eval)
 
-############################### part b)
+####################################################################### part b)
 
 # P(2/4)(x1eval)
-y1P24Eval = Pnm(f1, f1T6Coeff, 2, 4, x1Eval)
+y1P24Eval = Pnm(f1T6Coeff, 2, 4, x1Eval)
 
 # x1Eval v P(2/4)(x1Eval)
 plt.plot(x1Eval, y1P24Eval)
 
-############################### part c)
+####################################################################### part c)
 
 # P(4/2)(x1Eval)
-y1P42Eval = Pnm(f1, f1T6Coeff, 4, 2, x1Eval)
+y1P42Eval = Pnm(f1T6Coeff, 4, 2, x1Eval)
 
 # x1Eval v P(4/2)(x1Eval)
 plt.plot(x1Eval, y1P42Eval)
 
 plt.legend(["sin(x)", "T6(x)", "P(3/3)(x)", "P(2/4)(x)", "P(4/2)(x)"])
+
+################################################## error for all approximations
+
+plt.figure("Problem 1 Error Graphs")
+
+# T6(x1Eval)
+y1T6EvalErr = jax.numpy.absolute(y1Eval - y1T6Eval)
+plt.plot(x1Eval, y1T6EvalErr)
+
+# P(3/3)(x1Eval)
+y1P33EvalErr = jax.numpy.absolute(y1Eval - y1P33Eval)
+plt.plot(x1Eval, y1P33EvalErr)
+
+# P(2/4)(x1Eval)
+y1P24EvalErr = jax.numpy.absolute(y1Eval - y1P24Eval)
+plt.plot(x1Eval, y1P24EvalErr)
+
+# P(4/2)(x1Eval)
+y1P42EvalErr = jax.numpy.absolute(y1Eval - y1P42Eval)
+plt.plot(x1Eval, y1P42EvalErr)
+
+plt.legend(["T6(x)", "P(3/3)(x)", "P(2/4)(x)", "P(4/2)(x)"])
+
 plt.show()
+
