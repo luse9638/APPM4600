@@ -68,6 +68,7 @@ f1T6Coeff = [0, 1, 0, (-1 / 6), 0, (1 / 120), 0]
 y1T6Eval = Tn(f1, 6, 0.0, x1Eval)
 
 plt.figure("Problem 1)")
+plt.title("Sin(x) v its Taylor and some of its Pade Approximations")
 
 # x1Eval v f1(x1Eval)
 plt.plot(x1Eval, y1Eval)
@@ -90,5 +91,13 @@ y1P24Eval = Pnm(f1, f1T6Coeff, 2, 4, x1Eval)
 # x1Eval v P(2/4)(x1Eval)
 plt.plot(x1Eval, y1P24Eval)
 
-plt.legend(["sin(x)", "T6(x)", "P(3/3)(x)", "P(2/4)(x)"])
+############################### part c)
+
+# P(4/2)(x1Eval)
+y1P42Eval = Pnm(f1, f1T6Coeff, 4, 2, x1Eval)
+
+# x1Eval v P(4/2)(x1Eval)
+plt.plot(x1Eval, y1P42Eval)
+
+plt.legend(["sin(x)", "T6(x)", "P(3/3)(x)", "P(2/4)(x)", "P(4/2)(x)"])
 plt.show()
