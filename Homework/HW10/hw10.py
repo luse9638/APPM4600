@@ -52,8 +52,8 @@ def Pnm(f, coeff, n, m, x):
     return p(x) / q(x)
 
 ##################################################################### Problem 1)
+
 print("Problem 1)")
-############################### part a)
 
 # f1(x) = sin(x)
 f1 = lambda x: jax.numpy.sin(x)
@@ -61,13 +61,11 @@ f1 = lambda x: jax.numpy.sin(x)
 # x-values to evaluate at
 x1Eval = jax.numpy.linspace(0, 5, 1000)
 
-# f1(x)
+# f1(x1Eval)
 y1Eval = f1(x1Eval)
-# T6(x)
-y1T6Eval = Tn(f1, 6, 0.0, x1Eval)
-# P(3/3)(x)
+# T6(x1Eval)
 f1T6Coeff = [0, 1, 0, (-1 / 6), 0, (1 / 120), 0]
-y1P33Eval = Pnm(f1, f1T6Coeff, 3, 3, x1Eval)
+y1T6Eval = Tn(f1, 6, 0.0, x1Eval)
 
 plt.figure("Problem 1)")
 
@@ -75,9 +73,22 @@ plt.figure("Problem 1)")
 plt.plot(x1Eval, y1Eval)
 # x1Eval v T6(x1Eval)
 plt.plot(x1Eval, y1T6Eval)
+
+############################### part a)
+
+# P(3/3)(x1Eval)
+y1P33Eval = Pnm(f1, f1T6Coeff, 3, 3, x1Eval)
+
 # x1Eval v P(3/3)(x1Eval)
 plt.plot(x1Eval, y1P33Eval)
-plt.legend(["sin(x)", "T6(x)", "P(3/3)(x)"])
 
+############################### part b)
+
+# P(2/4)(x1eval)
+y1P24Eval = Pnm(f1, f1T6Coeff, 2, 4, x1Eval)
+
+# x1Eval v P(2/4)(x1Eval)
+plt.plot(x1Eval, y1P24Eval)
+
+plt.legend(["sin(x)", "T6(x)", "P(3/3)(x)", "P(2/4)(x)"])
 plt.show()
-
