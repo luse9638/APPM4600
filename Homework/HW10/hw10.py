@@ -122,6 +122,7 @@ plt.plot(x1Eval, y1P24EvalErr)
 y1P42EvalErr = jax.numpy.absolute(y1Eval - y1P42Eval)
 plt.plot(x1Eval, y1P42EvalErr)
 
+plt.title("Errors")
 plt.legend(["T6(x)", "P(3/3)(x)", "P(2/4)(x)", "P(4/2)(x)"])
 
 plt.show()
