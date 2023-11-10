@@ -1,4 +1,5 @@
 ######################################################################## imports
+########################################################################
 
 import numpy as np
 import math
@@ -7,6 +8,8 @@ import scipy
 import matplotlib.pyplot as plt
 
 #################################################################### subroutines
+####################################################################
+
 def Tn(f, n, x0, x):
     '''
     Compute the nth order Taylor polynomial of function f , centered at x0,
@@ -116,8 +119,8 @@ def newtonCotes(f, a, b, n, m):
         print("Haven't implemented that value of n yet!")
         return -1
     
-
 ##################################################################### Problem 1)
+#####################################################################
 
 print("Problem 1)")
 
@@ -141,7 +144,7 @@ plt.plot(x1Eval, y1Eval)
 # x1Eval v T6(x1Eval)
 plt.plot(x1Eval, y1T6Eval)
 
-####################################################################### part a)
+######################################################################## part a)
 
 # P(3/3)(x1Eval)
 y1P33Eval = Pnm(f1T6Coeff, 3, 3, x1Eval)
@@ -149,7 +152,7 @@ y1P33Eval = Pnm(f1T6Coeff, 3, 3, x1Eval)
 # x1Eval v P(3/3)(x1Eval)
 plt.plot(x1Eval, y1P33Eval)
 
-####################################################################### part b)
+######################################################################## part b)
 
 # P(2/4)(x1eval)
 y1P24Eval = Pnm(f1T6Coeff, 2, 4, x1Eval)
@@ -157,7 +160,7 @@ y1P24Eval = Pnm(f1T6Coeff, 2, 4, x1Eval)
 # x1Eval v P(2/4)(x1Eval)
 plt.plot(x1Eval, y1P24Eval)
 
-####################################################################### part c)
+######################################################################## part c)
 
 # P(4/2)(x1Eval)
 y1P42Eval = Pnm(f1T6Coeff, 4, 2, x1Eval)
@@ -167,7 +170,7 @@ plt.plot(x1Eval, y1P42Eval)
 
 plt.legend(["sin(x)", "T6(x)", "P(3/3)(x)", "P(2/4)(x)", "P(4/2)(x)"])
 
-################################################## error for all approximations
+################################################### error for all approximations
 
 plt.figure("Problem 1 Error Graphs")
 
@@ -193,9 +196,24 @@ plt.legend(["T6(x)", "P(3/3)(x)", "P(2/4)(x)", "P(4/2)(x)"])
 plt.show()
 
 ##################################################################### Problem 3)
+#####################################################################
 print("Problem 3)")
 
 f2 = lambda x: (1) / (1 + x ** 2)
 
-print(newtonCotes(f2, -5, 5, 2, 20))
-print(newtonCotes(f2, -5, 5, 3, 20))
+
+
+print("Trapezoidal, n = 1,291: ")
+print(newtonCotes(f2, -5, 5, 2, 1291))
+print("\nSimpsons, n = 108: ")
+print(newtonCotes(f2, -5, 5, 3, 108))
+print("\nscipy.integrate.quad, tol = 1 x 10^-6: ")
+dict1 = scipy.integrate.quad(f2, -5, 5, full_output = 1,\
+                           epsabs = 1e-6)
+print(dict1[0])
+print("Iterations needed: " + str(dict1[2]['neval']))
+print("\nscipy.integrate.quad, tol = 1 x 10^-4: ")
+dict2 = scipy.integrate.quad(f2, -5, 5, full_output = 1,\
+                           epsabs = 1e-4)
+print(dict2[0])
+print("Iterations needed: " + str(dict2[2]['neval']))
