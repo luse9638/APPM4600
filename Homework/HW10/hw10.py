@@ -51,6 +51,72 @@ def Pnm(coeff, n, m, x):
     p, q = scipy.interpolate.pade(coeff, m, n)
     return p(x) / q(x)
 
+def trapezoidal(f, a, b):
+    '''
+    Approximates the integral of f on [a, b] with the trapezoidal rule
+    Inputs:
+        f: function
+        a: left endpoint
+        b: right endpoint
+    Return: approximation of integral
+    '''
+
+    # interval size
+    h = abs(b - a)
+
+    return (h / 2) * (f(a) + f(b))
+
+def simpsons(f, a, b, midpoint):
+    '''
+    Approximates the integral of f on [a, b] with simpson's rule
+    Inputs:
+        f: function
+        a: left endpoint
+        b: right endpoint
+    Return: approximation of integral
+    '''
+
+    # interval size
+    h = abs((b - a)) / 2
+
+    return (h / 3) * (f(a) + (4 * f(midpoint)) + f(b))
+
+def newtonCotes(f, a, b, n, m):
+    '''
+    Approximates the integral of f on [a, b] with a composite nth order
+    Newton-Cotes formula using m intervals, i.e. (m + 1) equally spaced points 
+    t_0, ..., t_m, where a = t_0 and b = t_m
+    
+    For n = 2, this uses composite trapezoidal rule on the intervals 
+    [t_0, t_1], ..., [t_i, t_(i + 1)], ..., [t_(m - 1), t_m]
+    
+    For n = 3, m MUST BE EVEN, this uses composite Simpson's rule on the 
+    intervals [t_0, t_2], ... [t_i, t_(i + 2)], ..., [t_(m - 2), t_m]
+    '''
+
+    # interval size
+    h = (b - a) / m
+
+    # list of nodes
+    xNodes = np.linspace(a, b, (m + 1)) # size m + 1, indices run from 0 to m
+
+    integral = 0
+
+    # using trapezoidal rule
+    if (n == 2):
+        for i in range(0, len(xNodes) - 1): # i in [0, m - 1], m values of i
+            integral += trapezoidal(f, xNodes[i], xNodes[i + 1])
+        return integral
+    # using simpson's rule
+    elif (n == 3):
+        for i in range(0, len(xNodes) - 2, 2):
+            integral += simpsons(f, xNodes[i], xNodes[i + 2], xNodes[i + 1])
+        return integral
+    else:
+        print("Haven't implemented that value of n yet!")
+        return -1
+    
+
 ##################################################################### Problem 1)
 
 print("Problem 1)")
@@ -79,7 +145,6 @@ plt.plot(x1Eval, y1T6Eval)
 
 # P(3/3)(x1Eval)
 y1P33Eval = Pnm(f1T6Coeff, 3, 3, x1Eval)
-print(y1P33Eval)
 
 # x1Eval v P(3/3)(x1Eval)
 plt.plot(x1Eval, y1P33Eval)
@@ -127,3 +192,10 @@ plt.legend(["T6(x)", "P(3/3)(x)", "P(2/4)(x)", "P(4/2)(x)"])
 
 plt.show()
 
+##################################################################### Problem 3)
+print("Problem 3)")
+
+f2 = lambda x: (1) / (1 + x ** 2)
+
+print(newtonCotes(f2, -5, 5, 2, 20))
+print(newtonCotes(f2, -5, 5, 3, 20))
