@@ -54,16 +54,17 @@ def compositeGammaTrapezoid(xEval, b, n):
 
     return (h / 2) * (ga + (2 * sum) + gb)
 
-
-
 ##################################################################### Problem 3)
 #####################################################################
 
 ######################################################################## part a)
 print("\n", "Problem 3a)", "\n")
 
+numIntervals = 100000
+rightEndpoint = 100
+
 print("x = 2")
-cGT2 = compositeGammaTrapezoid(2, 100, 100000)
+cGT2 = compositeGammaTrapezoid(2, rightEndpoint, numIntervals)
 sGF2 = sp.special.gamma(2)
 relErr2 = abs(cGT2 - sGF2) / abs(sGF2)
 print("Composite trapezoid: ", cGT2)
@@ -71,7 +72,7 @@ print("Scipy gamma function: ", sGF2)
 print("Relative error: ", relErr2, "\n")
 
 print("x = 4")
-cGT4 = compositeGammaTrapezoid(4, 100, 100000)
+cGT4 = compositeGammaTrapezoid(4, rightEndpoint, numIntervals)
 sGF4 = sp.special.gamma(4)
 relErr4 = abs(cGT4 - sGF4) / abs(sGF4)
 print("Composite trapezoid: ", cGT4)
@@ -79,7 +80,7 @@ print("Scipy gamma function: ", sGF4)
 print("Relative error: ", relErr4, "\n")
 
 print("x = 6")
-cGT6 = compositeGammaTrapezoid(6, 100, 100000)
+cGT6 = compositeGammaTrapezoid(6, rightEndpoint, numIntervals)
 sGF6 = sp.special.gamma(6)
 relErr6 = abs(cGT6 - sGF6) / abs(sGF6)
 print("Composite trapezoid: ", cGT6)
@@ -87,7 +88,7 @@ print("Scipy gamma function: ", sGF6)
 print("Relative error: ", relErr6, "\n")
 
 print("x = 8")
-cGT8 = compositeGammaTrapezoid(8, 100, 100000)
+cGT8 = compositeGammaTrapezoid(8, rightEndpoint, numIntervals)
 sGF8 = sp.special.gamma(8)
 relErr8 = abs(cGT8 - sGF8) / abs(sGF8)
 print("Composite trapezoid: ", cGT8)
@@ -95,9 +96,35 @@ print("Scipy gamma function: ", sGF8)
 print("Relative error: ", relErr8, "\n")
 
 print("x = 10")
-cGT10 = compositeGammaTrapezoid(10, 100, 100000)
+cGT10 = compositeGammaTrapezoid(10, rightEndpoint, numIntervals)
 sGF10 = sp.special.gamma(10)
 relErr10 = abs(cGT10 - sGF10) / abs(sGF10)
 print("Composite trapezoid: ", cGT10)
 print("Scipy gamma function: ", sGF10)
 print("Relative error: ", relErr10, "\n")
+
+######################################################################## part b)
+print("Problem 3b)", "\n")
+
+print("x = 2")
+print("Composite trapezoid: ", cGT2)
+print("Number of function calls: ", numIntervals + 1, "\n")
+
+print("x = 4")
+print("Composite trapezoid: ", cGT4)
+print("Number of function calls: ", numIntervals + 1, "\n")
+
+print("x = 6")
+print("Composite trapezoid: ", cGT6)
+print("Number of function calls: ", numIntervals + 1, "\n")
+
+print("x = 8")
+print("Composite trapezoid: ", cGT8)
+print("Number of function calls: ", numIntervals + 1, "\n")
+
+print("x = 10")
+print("Composite trapezoid: ", cGT10)
+print("Number of function calls: ", numIntervals + 1, "\n")
+
+
+
