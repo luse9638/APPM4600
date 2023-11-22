@@ -159,7 +159,7 @@ print("Composite trapezoid: ", cGT10)
 print("Number of function calls: ", numIntervals + 1, "\n")
 
 ######################################################################## part b)
-print("Problem 3b)", "\n")
+print("Problem 3c)", "\n")
 
 print("x = 2")
 gLG2 = gaussLaguerreGamma(2)
@@ -180,7 +180,3 @@ print("Gauss-Laguerre: ", gLG8, "\n")
 print("x = 10")
 gLG10 = gaussLaguerreGamma(10)
 print("Gauss-Laguerre: ", gLG10, "\n")
-
-
-
-
