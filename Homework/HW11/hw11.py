@@ -52,7 +52,39 @@ def compositeGammaTrapezoid(xEval, b, n):
             continue
         sum += g(node)
 
-    return (h / 2) * (ga + (2 * sum) + gb)
+    fEval = (h / 2) * (ga + (2 * sum) + gb)
+    return fEval
+
+def gaussLaguerreGamma(xEval):
+    '''
+    Approximate the gamma function, evaluated at xEval, using the
+    Gauss-Laguerre quadrature
+    Inputs:
+        xEval: value to evaluate
+    Outputs:
+        fEval: approximation of the gamma function evaluated at xEval
+    '''
+
+    # - gamma function: G(x) = Int_{0}^{Inf} (t^{x - 1} * e^{-t}) dt
+    # - approximation: G(x) ~= Int_{0}^{b} (g(t)) dt
+    #   where g(t) = t^{xEval - 1} * e^{-t}
+
+    # - choose value for n, the number of sample points / weights
+    # - Gauss-Laguerre can correctly integrate polynomials of degree (2n - 1) or
+    #   less
+    # - polynomial being integrated is t^{xEval - 1}
+    gg = lambda t: t ** (xEval - 1)
+    # - => n = ceil(xEval / 2)
+    n = int(np.ceil(xEval / 2))
+
+    # calculate sample points and weights for quadrature
+    samplePoints, weights = np.polynomial.laguerre.laggauss(n)
+
+    fEval = 0
+    for i in range(0, len(samplePoints)):
+        fEval += weights[i] * gg(samplePoints[i])
+    
+    return fEval
 
 ##################################################################### Problem 3)
 #####################################################################
@@ -125,6 +157,30 @@ print("Number of function calls: ", numIntervals + 1, "\n")
 print("x = 10")
 print("Composite trapezoid: ", cGT10)
 print("Number of function calls: ", numIntervals + 1, "\n")
+
+######################################################################## part b)
+print("Problem 3b)", "\n")
+
+print("x = 2")
+gLG2 = gaussLaguerreGamma(2)
+print("Gauss-Laguerre: ", gLG2, "\n")
+
+print("x = 4")
+gLG4 = gaussLaguerreGamma(4)
+print("Gauss-Laguerre: ", gLG4, "\n")
+
+print("x = 6")
+gLG6 = gaussLaguerreGamma(6)
+print("Gauss-Laguerre: ", gLG6, "\n")
+
+print("x = 8")
+gLG8 = gaussLaguerreGamma(8)
+print("Gauss-Laguerre: ", gLG8, "\n")
+
+print("x = 10")
+gLG10 = gaussLaguerreGamma(10)
+print("Gauss-Laguerre: ", gLG10, "\n")
+
 
 
 
