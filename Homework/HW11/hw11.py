@@ -2,6 +2,7 @@
 ########################################################################
 
 import numpy as np
+import scipy as sp
 
 #################################################################### subroutines
 ####################################################################
@@ -38,7 +39,7 @@ def compositeGammaTrapezoid(xEval, b, n):
     # create (n + 1) nodes for n intervals, including the endpoints
     tNodes = np.linspace(a, b, n + 1)
 
-    # evaluate f at endpoints
+    # evaluate g at endpoints
     ga = g(a)
     gb = g(b)
 
@@ -59,7 +60,44 @@ def compositeGammaTrapezoid(xEval, b, n):
 #####################################################################
 
 ######################################################################## part a)
-print("Problem 3a)")
+print("\n", "Problem 3a)", "\n")
 
-f1 = lambda x: x ** 2
-print(compositeGammaTrapezoid(6, 100, 1000))
+print("x = 2")
+cGT2 = compositeGammaTrapezoid(2, 100, 100000)
+sGF2 = sp.special.gamma(2)
+relErr2 = abs(cGT2 - sGF2) / abs(sGF2)
+print("Composite trapezoid: ", cGT2)
+print("Scipy gamma function: ", sGF2)
+print("Relative error: ", relErr2, "\n")
+
+print("x = 4")
+cGT4 = compositeGammaTrapezoid(4, 100, 100000)
+sGF4 = sp.special.gamma(4)
+relErr4 = abs(cGT4 - sGF4) / abs(sGF4)
+print("Composite trapezoid: ", cGT4)
+print("Scipy gamma function: ", sGF4)
+print("Relative error: ", relErr4, "\n")
+
+print("x = 6")
+cGT6 = compositeGammaTrapezoid(6, 100, 100000)
+sGF6 = sp.special.gamma(6)
+relErr6 = abs(cGT6 - sGF6) / abs(sGF6)
+print("Composite trapezoid: ", cGT6)
+print("Scipy gamma function: ", sGF6)
+print("Relative error: ", relErr6, "\n")
+
+print("x = 8")
+cGT8 = compositeGammaTrapezoid(8, 100, 100000)
+sGF8 = sp.special.gamma(8)
+relErr8 = abs(cGT8 - sGF8) / abs(sGF8)
+print("Composite trapezoid: ", cGT8)
+print("Scipy gamma function: ", sGF8)
+print("Relative error: ", relErr8, "\n")
+
+print("x = 10")
+cGT10 = compositeGammaTrapezoid(10, 100, 100000)
+sGF10 = sp.special.gamma(10)
+relErr10 = abs(cGT10 - sGF10) / abs(sGF10)
+print("Composite trapezoid: ", cGT10)
+print("Scipy gamma function: ", sGF10)
+print("Relative error: ", relErr10, "\n")
